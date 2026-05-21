@@ -236,13 +236,8 @@
 
         .busta:hover::before { background-color: var(--blu-navy); }
 
-        /* Cartella contrassegnata come privata visivamente */
-        .busta.busta-privata::before {
-            background-color: #4A5568;
-        }
-        .busta.busta-privata:hover::before {
-            background-color: var(--blu-navy);
-        }
+        .busta.busta-privata::before { background-color: #4A5568; }
+        .busta.busta-privata:hover::before { background-color: var(--blu-navy); }
 
         .busta i.icona-cartella {
             font-size: 3.6rem;
@@ -621,10 +616,10 @@
         let documentoList = [];
         let currentSezioneId = null;
         let idDocumentoDaRinnovare = null;
-        let vistaAttuale = 'porto'; // 'porto' o 'personale'
+        let vistaAttuale = 'porto'; 
         let currentUserId = null;
 
-        // ASCOLTATORE DI STATO AUTOMATICO (Controlla se l'utente è connesso o disconnesso)
+        // ASCOLTATORE DI STATO AUTOMATICO
         window.onload = function() {
             supabaseClient.auth.onAuthStateChange((event, session) => {
                 if (session) {
@@ -646,7 +641,6 @@
         function cambiaVista(tipoVista) {
             vistaAttuale = tipoVista;
             
-            // Aggiorna l'aspetto dei pulsanti tab
             document.getElementById('btn-vista-porto').classList.remove('attivo');
             document.getElementById('btn-vista-personale').classList.remove('attivo');
             
@@ -662,7 +656,7 @@
             renderSezioni();
         }
 
-        // FUNZIONE LOGIN DI SICUREZZA REALE
+        // FUNZIONE LOGIN
         async function eseguiLogin(event) {
             event.preventDefault();
             const email = document.getElementById('login-email').value;
@@ -678,7 +672,7 @@
             }
         }
 
-        // FUNZIONE LOGOUT DI SICUREZZA
+        // FUNZIONE LOGOUT
         async function eseguiLogout() {
             if(confirm("Vuoi disconnetterti dall'applicazione?")) {
                 const { error } = await supabaseClient.auth.signOut();
@@ -688,12 +682,10 @@
 
         async function caricaDatiDalCloud() {
             try {
-                // Scarichiamo tutte le sezioni
                 let { data: dataSez, error: errSez } = await supabaseClient.from('sezioni').select('*').order('nome');
                 if (errSez) throw errSez;
                 sezioni = dataSez || [];
 
-                // Scarichiamo tutti i documenti
                 let { data: dataDoc, error: errDoc } = await supabaseClient.from('documenti').select('*');
                 if (errDoc) throw errDoc;
                 documentoList = dataDoc || [];
@@ -728,12 +720,11 @@
             const griglia = document.getElementById('griglia-sezioni');
             griglia.innerHTML = '';
 
-            // FILTRAGGIO DI SICUREZZA DELLE CARTELLINE IN BASE ALLA VISTA SELEZIONATA
             const sezioniFiltrate = sezioni.filter(s => {
                 if (vistaAttuale === 'porto') {
-                    return s.privato === false || s.privato === null; // Solo cartelle pubbliche del porto
+                    return s.privato === false || s.privato === null;
                 } else {
-                    return s.privato === true && s.user_id === currentUserId; // Solo cartelle private del mio account
+                    return s.privato === true && s.user_id === currentUserId;
                 }
             });
 
@@ -845,7 +836,7 @@
                         badgeStato = `<span class="status status-nero"><i class="fa-solid fa-circle-xmark"></i> Scaduto</span>`;
                     } else if (giorniRimanenti <= 30) {
                         badgeStato = `<span class="status status-rosso"><i class="fa-solid fa-triangle-exclamation"></i> Critico (<30gg)</span>`;
-                    } else if (giorniRimanents <= 120) {
+                    } else if (giorniRimanenti <= 120) {
                         badgeStato = `<span class="status status-alert"><i class="fa-solid fa-circle-exclamation"></i> Giallo (<4 mesi)</span>`;
                     } else {
                         badgeStato = `<span class="status status-ok"><i class="fa-solid fa-circle-check"></i> Valido</span>`;
@@ -922,7 +913,6 @@
             const nome = document.getElementById('input-nome-sezione').value;
             const icona = document.getElementById('input-icona-sezione').value;
 
-            // Logica intelligente: se siamo nella scheda personale, impostiamo privato = true e colleghiamo l'user_id
             const èPrivato = (vistaAttuale === 'personale');
             const utenteProprietario = èPrivato ? currentUserId : null;
 
