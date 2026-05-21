@@ -37,32 +37,25 @@
             margin: 0 auto;
         }
 
-        /* --- INTESTAZIONE CON LOGO --- */
+        /* --- INTESTAZIONE --- */
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .header .logo-societa {
-            max-height: 80px;
-            width: auto;
-            margin-bottom: 15px;
-            display: block;
+            margin-bottom: 40px;
         }
 
         .header h1 {
             color: var(--blu-navy);
-            font-size: 2rem;
-            margin-bottom: 5px;
-            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
         }
 
         .header p {
             color: var(--grigio-luce);
-            font-size: 1rem;
+            font-size: 1.05rem;
         }
 
         /* --- SCHERMATA 1: INTERFACCIA ARCHIVIO (GRIGLIA BUSTE) --- */
@@ -265,6 +258,7 @@
             font-size: 1.1rem;
             margin-right: 12px;
             transition: color 0.2s;
+            padding: 5px;
         }
         .azioni button:hover { color: var(--azzurro); }
         .azioni button.btn-elimina:hover { color: var(--rosso-allerta); }
@@ -334,7 +328,7 @@
         }
         .form-group input:focus, .form-group select:focus { border-color: var(--azzurro); }
 
-        /* Contenitore di Upload nativo per scatto foto da cellulare */
+        /* Upload nativo cellulare */
         .file-upload-wrapper {
             position: relative;
             border: 2px dashed var(--grigio-luce);
@@ -347,8 +341,6 @@
         .file-upload-wrapper:hover { border-color: var(--azzurro); }
         .file-upload-wrapper i { font-size: 1.8rem; color: var(--azzurro); margin-bottom: 8px; }
         .file-upload-wrapper p { font-size: 0.85rem; color: var(--blu-navy); font-weight: 500; }
-        
-        /* Input nascosto ma cliccabile su tutta l'area */
         .file-upload-wrapper input[type="file"] {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
         }
@@ -374,11 +366,9 @@
         /* --- RESPONSIVE SMARTPHONE --- */
         @media(max-width: 650px) {
             body { padding: 15px 10px; }
-            .header .logo-societa { max-height: 60px; }
-            .header h1 { font-size: 1.6rem; }
+            .header h1 { font-size: 1.8rem; }
             .header-sezione { flex-direction: column; gap: 12px; align-items: flex-start; padding: 15px; }
             .btn-azione-principale { width: 100%; justify-content: center; }
-            /* Nascondiamo la colonna stato testo per lasciare spazio alla data su schermi piccolissimi */
             .tabella-documenti th:nth-child(3), .tabella-documenti td:nth-child(3) { display: none; }
             .tabella-documenti th, .tabella-documenti td { padding: 12px 10px; font-size: 0.9rem; }
             .archivio-grid { gap: 25px; }
@@ -441,17 +431,17 @@
             <form id="form-nuova-sezione" onsubmit="salvaNuovaSezione(event)">
                 <div class="form-group">
                     <label for="input-nome-sezione">Nome della Categoria</label>
-                    <input type="text" id="input-nome-sezione" placeholder="es. Sicurezza sul Lavoro, Impianti" required>
+                    <input type="text" id="input-nome-sezione" placeholder="es. Antincendio, Messa a terra" required>
                 </div>
                 <div class="form-group">
                     <label for="input-icona-sezione">Tipologia Icona Grafica</label>
                     <select id="input-icona-sezione">
-                        <option value="fa-fire-extinguisher">🧯 Estintore / Antincendio</option>
-                        <option value="fa-bolt">⚡ Elettricità / Messa a terra</option>
+                        <option value="fa-fire-extinguisher">🧯 Antincendio / Sicurezza</option>
+                        <option value="fa-bolt">⚡ Impianti Elettrici</option>
                         <option value="fa-file-signature">📜 Contratti / Demanio</option>
-                        <option value="fa-shield-halved">🛡️ Sicurezza / Normative</option>
-                        <option value="fa-file-invoice-dollar">💼 Assicurazioni</option>
-                        <option value="fa-wrench">🔧 Manutenzioni Banchine</option>
+                        <option value="fa-shield-halved">🛡️ Normative Lavoro</option>
+                        <option value="fa-file-invoice-dollar">💼 Assicurazioni Società</option>
+                        <option value="fa-wrench">🔧 Manutenzioni / Banchine</option>
                     </select>
                 </div>
                 <div class="modal-footer">
@@ -491,41 +481,55 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn-annulla" onclick="chiudiModalDocumento()">Annulla</button>
-                    <button type="submit" class="btn-salva">Salva nei Dati</button>
+                    <button type="submit" class="btn-salva">Salva nel Cloud</button>
                 </div>
             </form>
         </div>
     </div>
 
-
     <script>
-        // --- MEMORIA SIMULATA (Local Storage) ---
-        // Domani queste variabili verranno caricate e sincronizzate via API con Supabase
-        let sezioni = JSON.parse(localStorage.getItem('mp_sezioni')) || [
-            { id: '1', nome: 'Prevenzione Incendi (CPI)', icona: 'fa-fire-extinguisher' },
-            { id: '2', nome: 'Verifica Messa a Terra', icona: 'fa-bolt' },
-            { id: '3', nome: 'Concessioni Demaniali', icona: 'fa-file-signature' }
-        ];
+        // --- 1. CONFIGURAZIONE CHIAVI ACCOUNT ---
+        const SUPABASE_URL = 'IL_TUO_URL_DI_SUPABASE'; 
+        const SUPABASE_ANON_KEY = 'LA_TUA_CHIAVE_ANON_DI_SUPABASE';
 
-        let documenti = JSON.parse(localStorage.getItem('mp_documenti')) || [
-            { id: '101', sezione_id: '1', nome: 'Certificato CPI Autorimesse', scadenza: '2026-11-20', file: 'cpi_auto.pdf' },
-            { id: '102', sezione_id: '2', nome: 'Verifica Periodica Impianto Molo A', scadenza: '2026-06-15', file: 'messa_terra_a.jpg' }
-        ];
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // --- STATO APPLICAZIONE ---
+        let sezioni = [];
+        let documenti = [];
         let currentSezioneId = null;
 
-        // All'avvio dell'applicazione renderizza la Home con le buste
+        // Inizializzazione al caricamento della pagina
         window.onload = function() {
-            salvaInMemoriaLocale();
-            renderSezioni();
+            caricaDatiDalCloud();
         };
 
-        function salvaInMemoriaLocale() {
-            localStorage.setItem('mp_sezioni', JSON.stringify(sezioni));
-            localStorage.setItem('mp_documenti', JSON.stringify(documenti));
+        // --- RECUPERO DATI IN TEMPO REALE DA SUPABASE ---
+        async function caricaDatiDalCloud() {
+            try {
+                // Legge le sezioni
+                let { data: dataSez, error: errSez } = await supabase.from('sezioni').select('*').order('nome');
+                if (errSez) throw errSez;
+                sezioni = dataSez || [];
+
+                // Legge i documenti
+                let { data: dataDoc, error: errDoc } = await supabase.from('documenti').select('*');
+                if (errDoc) throw errDoc;
+                documenti = dataDoc || [];
+
+                // Aggiorna l'interfaccia corretta
+                if (currentSezioneId) {
+                    renderDocumenti();
+                } else {
+                    renderSezioni();
+                }
+            } catch (error) {
+                console.error("Errore di sincronizzazione:", error.message);
+                alert("Impossibile connettersi al database di Supabase. Controlla le chiavi API.");
+            }
         }
 
-        // --- GESTIONE SCHERMATE (Navigazione SPA) ---
+        // --- NAVIGAZIONE SCHERMATE (SPA) ---
         function mostraArchivio() {
             currentSezioneId = null;
             document.getElementById('view-sezione').style.display = 'none';
@@ -543,13 +547,12 @@
             renderDocumenti();
         }
 
-        // --- DISEGNO ELEMENTI GRAFICI (Render) ---
+        // --- DISEGNO ELEMENTI INTERFACCIA (RENDER) ---
         function renderSezioni() {
             const griglia = document.getElementById('griglia-sezioni');
             griglia.innerHTML = '';
 
             sezioni.forEach(sez => {
-                // Conta quanti documenti appartengono a questa sezione
                 const contaDoc = documenti.filter(d => d.sezione_id === sez.id).length;
                 const testoDoc = contaDoc === 1 ? '1 Documento' : `${contaDoc} Documenti`;
 
@@ -567,7 +570,7 @@
                 griglia.appendChild(div);
             });
 
-            // Aggiungi in fondo il tasto fisso "Crea Nuova Sezione"
+            // Pulsante creazione fisso
             const btnAggiungi = document.createElement('div');
             btnAggiungi.className = 'busta busta-aggiungi';
             btnAggiungi.onclick = apriModalSezione;
@@ -592,15 +595,14 @@
                 msgVuoto.style.display = 'none';
             }
 
-            // Ordina i documenti mettendo le scadenze più vicine/scadute in alto
-            docFiltrati.sort((a, b) => new Date(a.scadenza) - new Date(b.scadenza));
+            // Ordina per scadenza imminente
+            docFiltrati.sort((a, b) => new Date(a.data_scadenza) - new Date(b.data_scadenza));
 
             docFiltrati.forEach(doc => {
                 const tr = document.createElement('tr');
                 
-                // Calcola lo stato del semaforo basandosi sui giorni rimanenti
                 const oggi = new Date();
-                const dataScad = new Date(doc.scadenza);
+                const dataScad = new Date(doc.data_scadenza);
                 const diffTempo = dataScad - oggi;
                 const giorniRimanenti = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
 
@@ -613,105 +615,126 @@
                     badgeStato = `<span class="status status-ok"><i class="fa-solid fa-circle-check"></i> Valido</span>`;
                 }
 
-                // Formatta la data per una lettura italiana più piacevole
-                const opzioniData = { year: 'numeric', month: 'long', day: 'numeric' };
-                const dataFormattata = dataScad.toLocaleDateString('it-IT', opzioniData);
+                const dataFormattata = dataScad.toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
 
                 tr.innerHTML = `
                     <td><strong>${doc.nome}</strong></td>
                     <td>${dataFormattata}</td>
                     <td>${badgeStato}</td>
                     <td class="azioni" style="text-align: center;">
-                        <button title="Visualizza/Scarica" onclick="scaricaFile('${doc.file}')"><i class="fa-solid fa-file-pdf"></i></button>
-                        <button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button title="Apri / Scarica File" onclick="apriFileRegale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i></button>
+                        <button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // --- GESTIONE POPUP (Modali) ---
+        // --- GESTIONE MODALI ---
         function apriModalSezione() { document.getElementById('modal-sezione').classList.add('active'); }
         function chiudiModalSezione() {
             document.getElementById('modal-sezione').classList.remove('active');
             document.getElementById('form-nuova-sezione').reset();
         }
-
         function apriModalDocumento() { document.getElementById('modal-documento').classList.add('active'); }
         function chiudiModalDocumento() {
             document.getElementById('modal-documento').classList.remove('active');
             document.getElementById('form-nuovo-documento').reset();
             document.getElementById('file-selezionato-feedback').innerText = '';
         }
-
         function aggiornaNomeFile(input) {
             const feedback = document.getElementById('file-selezionato-feedback');
-            if(input.files && input.files.length > 0) {
-                feedback.innerText = "📸 Acquisito: " + input.files[0].name;
-            } else {
-                feedback.innerText = "";
-            }
+            if(input.files && input.files.length > 0) feedback.innerText = "📸 Acquisito: " + input.files[0].name;
+            else feedback.innerText = "";
         }
 
-        // --- OPERAZIONI DI CREAZIONE E CANCELLAZIONE ---
-        function salvaNuovaSezione(event) {
+        // --- AZIONI SCRITTURA/CANCELLAZIONE SU SUPABASE ---
+        async function salvaNuovaSezione(event) {
             event.preventDefault();
             const nome = document.getElementById('input-nome-sezione').value;
             const icona = document.getElementById('input-icona-sezione').value;
-            const nuovoId = Date.now().toString();
 
-            sezioni.push({ id: nuovoId, nome: nome, icona: icona });
-            salvaInMemoriaLocale();
-            chiudiModalSezione();
-            renderSezioni();
-        }
-
-        function eliminaSezione(event, idSezione) {
-            event.stopPropagation(); // Evita che cliccando il cestino si apra la cartella
+            const { error } = await supabase.from('sezioni').insert([{ nome: nome, icona: icona }]);
             
-            if(confirm("Sei sicuro di voler cancellare questa sezione? Verranno eliminati anche tutti i documenti all'interno!")) {
-                sezioni = sezioni.filter(s => s.id !== idSezione);
-                documenti = documenti.filter(d => d.sezione_id !== idSezione); // Cancella i documenti figli
-                salvaInMemoriaLocale();
-                renderSezioni();
+            if (error) {
+                alert("Errore durante il salvataggio: " + error.message);
+            } else {
+                chiudiModalSezione();
+                await caricaDatiDalCloud();
             }
         }
 
-        function salvaNuovoDocumento(event) {
+        async function eliminaSezione(event, idSezione) {
+            event.stopPropagation();
+            if(confirm("Vuoi cancellare questa sezione e tutti i certificati al suo interno?")) {
+                const { error } = await supabase.from('sezioni').delete().eq('id', idSezione);
+                if (error) alert(error.message);
+                else await caricaDatiDalCloud();
+            }
+        }
+
+        async function salvaNuovoDocumento(event) {
             event.preventDefault();
             const nome = document.getElementById('doc-nome').value;
             const scadenza = document.getElementById('doc-scadenza').value;
             const fileInput = document.getElementById('doc-file');
-            
-            let nomeFile = "allegato.pdf";
-            if(fileInput.files.length > 0) {
-                nomeFile = fileInput.files[0].name;
+
+            if(fileInput.files.length === 0) {
+                alert("Seleziona o scatta una foto al documento!");
+                return;
             }
 
-            const nuovoDoc = {
-                id: Date.now().toString(),
+            const file = fileInput.files[0];
+            const estensione = file.name.split('.').pop();
+            // Genera nome unico per evitare sovrascritture nello storage
+            const percorsoFile = `${currentSezioneId}/${Date.now()}.${estensione}`;
+
+            // 1. Caricamento fisico del file nello Storage da 100GB
+            const { error: errUpload } = await supabase.storage.from('file_documenti').upload(percorsoFile, file);
+            
+            if (errUpload) {
+                alert("Errore caricamento file nel Cloud: " + errUpload.message);
+                return;
+            }
+
+            // 2. Registrazione dei metadati e scadenza nel Database
+            const { error: errInsert } = await supabase.from('documenti').insert([{
                 sezione_id: currentSezioneId,
                 nome: nome,
-                scadenza: scadenza,
-                file: nomeFile
-            };
+                data_scadenza: scadenza,
+                file_path: percorsoFile
+            }]);
 
-            documenti.push(nuovoDoc);
-            salvaInMemoriaLocale();
-            chiudiModalDocumento();
-            renderDocumenti();
-        }
-
-        function eliminaDocumento(idDoc) {
-            if(confirm("Vuoi rimuovere questo documento dall'archivio?")) {
-                documenti = documenti.filter(d => d.id !== idDoc);
-                salvaInMemoriaLocale();
-                renderDocumenti();
+            if (errInsert) {
+                alert("Errore salvataggio dati: " + errInsert.message);
+            } else {
+                chiudiModalDocumento();
+                await caricaDatiDalCloud();
             }
         }
 
-        function scaricaFile(nomeFile) {
-            alert(`Apertura file simulata: ${nomeFile}\nDomani questa azione aprirà il file reale archiviato nello Storage di Supabase.`);
+        async function eliminaDocumento(idDoc, filePath) {
+            if(confirm("Vuoi rimuovere definitivamente questo documento dall'archivio cloud?")) {
+                // Elimina dal database
+                const { error: errDb } = await supabase.from('documenti').delete().eq('id', idDoc);
+                if (errDb) {
+                    alert(errDb.message);
+                    return;
+                }
+                // Elimina lo spazio nello storage
+                await supabase.storage.from('file_documenti').remove([filePath]);
+                await caricaDatiDalCloud();
+            }
+        }
+
+        // Riceve il percorso e apre il PDF o la Foto in una nuova scheda del browser
+        function apriFileRegale(filePath) {
+            const { data } = supabase.storage.from('file_documenti').getPublicUrl(filePath);
+            if (data && data.publicUrl) {
+                window.open(data.publicUrl, '_blank');
+            } else {
+                alert("Impossibile recuperare il file dal server.");
+            }
         }
     </script>
 </body>
