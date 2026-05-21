@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <script>
+        window.onerror = function(msg, url, line) {
+            alert("🚨 ERRORE DI SINTASSI RILEVATO!\n\nMessaggio: " + msg + "\nAlla riga del file: " + line);
+            return false;
+        };
+    </script>
+
     <style>
         /* --- CONFIGURAZIONE COLORI TEMA MARINA --- */
         :root {
@@ -66,7 +73,6 @@
             margin-top: 20px;
         }
 
-        /* Stile grafico "Busta / Cartellina" */
         .busta {
             background-color: var(--bianco);
             border-radius: 0 12px 12px 12px;
@@ -82,7 +88,6 @@
             text-align: center;
         }
 
-        /* Linguetta sporgente della cartellina */
         .busta::before {
             content: '';
             position: absolute;
@@ -122,7 +127,6 @@
             font-weight: bold;
         }
 
-        /* Pulsante per eliminare la sezione direttamente dalla busta */
         .btn-elimina-sezione {
             position: absolute;
             top: 10px;
@@ -137,22 +141,16 @@
             z-index: 10;
         }
 
-        .busta:hover .btn-elimina-sezione {
-            color: var(--rosso-allerta);
-        }
+        .busta:hover .btn-elimina-sezione { color: var(--rosso-allerta); }
 
-        /* Busta speciale tratteggiata per creazione */
         .busta-aggiungi {
             background-color: transparent;
             border: 2px dashed var(--grigio-luce);
             border-top: 2px dashed var(--grigio-luce);
             box-shadow: none;
         }
-        
         .busta-aggiungi::before { display: none; }
-
         .busta-aggiungi i { color: var(--grigio-luce); }
-
         .busta-aggiungi:hover {
             border-color: var(--azzurro);
             background-color: rgba(0, 119, 200, 0.04);
@@ -160,9 +158,7 @@
         .busta-aggiungi:hover i, .busta-aggiungi:hover h3 { color: var(--azzurro); }
 
         /* --- SCHERMATA 2: DETTAGLIO SEZIONE --- */
-        .view-sezione {
-            display: none; /* Nascosta di default */
-        }
+        .view-sezione { display: none; }
 
         .btn-indietro {
             display: inline-flex;
@@ -206,7 +202,6 @@
         }
         .btn-azione-principale:hover { background-color: var(--blu-navy); }
 
-        /* Tabella Documenti */
         .tabella-wrapper {
             background-color: var(--bianco);
             border-radius: 12px;
@@ -214,156 +209,56 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
 
-        .tabella-documenti {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        .tabella-documenti { width: 100%; border-collapse: collapse; }
 
         .tabella-documenti th, .tabella-documenti td {
-            padding: 16px 20px;
-            text-align: left;
-            border-bottom: 1px solid #E2E8F0;
+            padding: 16px 20px; text-align: left; border-bottom: 1px solid #E2E8F0;
         }
 
         .tabella-documenti th {
-            background-color: #EDF2F7;
-            color: var(--grigio-testo);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
+            background-color: #EDF2F7; color: var(--grigio-testo); font-weight: 600; text-transform: uppercase; font-size: 0.8rem;
         }
 
-        .tabella-documenti tr:last-child td { border-bottom: none; }
-
-        /* Semafori di Scadenza */
         .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
+            display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;
         }
         .status-ok { background-color: #C6F6D5; color: var(--verde-ok); }
         .status-alert { background-color: #FEFCBF; color: var(--giallo-alert); }
         .status-scaduto { background-color: #FED7D7; color: var(--rosso-allerta); }
 
         .azioni button {
-            background: none;
-            border: none;
-            color: var(--grigio-luce);
-            cursor: pointer;
-            font-size: 1.1rem;
-            margin-right: 12px;
-            transition: color 0.2s;
-            padding: 5px;
+            background: none; border: none; color: var(--grigio-luce); cursor: pointer; font-size: 1.1rem; margin-right: 12px; padding: 5px;
         }
         .azioni button:hover { color: var(--azzurro); }
         .azioni button.btn-elimina:hover { color: var(--rosso-allerta); }
 
-        .tabella-vuota {
-            padding: 40px;
-            text-align: center;
-            color: var(--grigio-luce);
-            font-style: italic;
-        }
+        .tabella-vuota { padding: 40px; text-align: center; color: var(--grigio-luce); font-style: italic; }
 
-        /* --- FINESTRE MODALI (POPUP) --- */
+        /* --- MODALI --- */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--overlay);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
-            z-index: 1000;
-            padding: 15px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay);
+            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 1000; padding: 15px;
         }
-
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-
-        .modal-box {
-            background-color: var(--bianco);
-            padding: 25px;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 480px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            transform: translateY(-15px);
-            transition: transform 0.25s ease;
-        }
-
+        .modal-box { background-color: var(--bianco); padding: 25px; border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); transform: translateY(-15px); transition: transform 0.25s ease; }
         .modal-overlay.active .modal-box { transform: translateY(0); }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--sfondo);
-            padding-bottom: 12px;
-        }
-
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--sfondo); padding-bottom: 12px; }
         .modal-header h2 { color: var(--blu-navy); font-size: 1.3rem; }
-        
-        .btn-chiudi-modal {
-            background: none; border: none; font-size: 1.4rem; color: var(--grigio-luce); cursor: pointer;
-        }
-
+        .btn-chiudi-modal { background: none; border: none; font-size: 1.4rem; color: var(--grigio-luce); cursor: pointer; }
         .form-group { margin-bottom: 18px; }
-
-        .form-group label {
-            display: block; margin-bottom: 6px; color: var(--blu-navy); font-weight: 600; font-size: 0.9rem;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="date"],
-        .form-group select {
-            width: 100%; padding: 11px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 0.95rem; outline: none;
-        }
+        .form-group label { display: block; margin-bottom: 6px; color: var(--blu-navy); font-weight: 600; font-size: 0.9rem; }
+        .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 11px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 0.95rem; outline: none; }
         .form-group input:focus, .form-group select:focus { border-color: var(--azzurro); }
 
-        /* Upload nativo cellulare */
-        .file-upload-wrapper {
-            position: relative;
-            border: 2px dashed var(--grigio-luce);
-            border-radius: 8px;
-            padding: 22px;
-            text-align: center;
-            background-color: var(--sfondo);
-            cursor: pointer;
-        }
-        .file-upload-wrapper:hover { border-color: var(--azzurro); }
+        .file-upload-wrapper { position: relative; border: 2px dashed var(--grigio-luce); border-radius: 8px; padding: 22px; text-align: center; background-color: var(--sfondo); cursor: pointer; }
         .file-upload-wrapper i { font-size: 1.8rem; color: var(--azzurro); margin-bottom: 8px; }
         .file-upload-wrapper p { font-size: 0.85rem; color: var(--blu-navy); font-weight: 500; }
-        .file-upload-wrapper input[type="file"] {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
-        }
+        .file-upload-wrapper input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .nome-file-selezionato { margin-top: 6px; font-size: 0.85rem; color: var(--verde-ok); font-weight: bold; word-break: break-all; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        .btn-annulla { background-color: transparent; border: 2px solid var(--grigio-luce); color: var(--grigio-luce); padding: 9px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-salva { background-color: var(--verde-ok); color: var(--bianco); border: none; padding: 9px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-        .nome-file-selezionato {
-            margin-top: 6px; font-size: 0.85rem; color: var(--verde-ok); font-weight: bold; word-break: break-all;
-        }
-
-        .modal-footer {
-            display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;
-        }
-
-        .btn-annulla {
-            background-color: transparent; border: 2px solid var(--grigio-luce); color: var(--grigio-luce);
-            padding: 9px 18px; border-radius: 8px; font-weight: bold; cursor: pointer;
-        }
-        .btn-salva {
-            background-color: var(--verde-ok); color: var(--bianco); border: none;
-            padding: 9px 18px; border-radius: 8px; font-weight: bold; cursor: pointer;
-        }
-        .btn-salva:hover { background-color: #2F855A; }
-
-        /* --- RESPONSIVE SMARTPHONE --- */
         @media(max-width: 650px) {
             body { padding: 15px 10px; }
             .header h1 { font-size: 1.8rem; }
@@ -371,36 +266,35 @@
             .btn-azione-principale { width: 100%; justify-content: center; }
             .tabella-documenti th:nth-child(3), .tabella-documenti td:nth-child(3) { display: none; }
             .tabella-documenti th, .tabella-documenti td { padding: 12px 10px; font-size: 0.9rem; }
-            .archivio-grid { gap: 25px; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
         <div class="header">
             <h1><i class="fa-solid fa-anchor"></i> Marina Porto Antico</h1>
             <p>Scadenziario Ufficiale Documenti & Certificazioni</p>
         </div>
 
-        <div id="view-archivio" class="view-archivio">
+        <div id="view-archivio">
             <div class="archivio-grid" id="griglia-sezioni">
+                <div style="padding: 20px; text-align: center; color: var(--grigio-luce); width: 100%;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Connessione al database di Marina Porto Antico...
                 </div>
+            </div>
         </div>
 
         <div id="view-sezione" class="view-sezione">
             <div onclick="mostraArchivio()" class="btn-indietro">
                 <i class="fa-solid fa-arrow-left"></i> Torna all'Archivio Principale
             </div>
-
             <div class="header-sezione">
-                <h2 id="titolo-sezione">Nome Sezione</h2>
+                <h2 id="titolo-sezione">Caricamento...</h2>
                 <button class="btn-azione-principale" onclick="apriModalDocumento()">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Carica Documento
                 </button>
             </div>
-
             <div class="tabella-wrapper">
                 <table class="tabella-documenti">
                     <thead>
@@ -411,15 +305,13 @@
                             <th style="width: 90px; text-align: center;">Azioni</th>
                         </tr>
                     </thead>
-                    <tbody id="lista-documenti">
-                        </tbody>
+                    <tbody id="lista-documenti"></tbody>
                 </table>
                 <div id="tabella-vuota-messaggio" class="tabella-vuota" style="display: none;">
-                    Nessun documento presente in questa cartella. Clicca su "Carica Documento" per iniziare.
+                    Nessun documento presente. Clicca su "Carica Documento" per iniziare.
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="modal-overlay" id="modal-sezione">
@@ -463,12 +355,10 @@
                     <label for="doc-nome">Nome Documento / Certificato</label>
                     <input type="text" id="doc-nome" placeholder="es. Rinnovo CPI Molo 3" required>
                 </div>
-
                 <div class="form-group">
                     <label for="doc-scadenza">Data di Scadenza Corrente</label>
                     <input type="date" id="doc-scadenza" required>
                 </div>
-
                 <div class="form-group">
                     <label>Scegli File PDF o Scatta Foto</label>
                     <div class="file-upload-wrapper">
@@ -478,7 +368,6 @@
                     </div>
                     <div id="file-selezionato-feedback" class="nome-file-selezionato"></div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn-annulla" onclick="chiudiModalDocumento()">Annulla</button>
                     <button type="submit" class="btn-salva">Salva nel Cloud</button>
@@ -489,47 +378,48 @@
 
     <script>
         // --- 1. CONFIGURAZIONE CHIAVI ACCOUNT ---
-        const SUPABASE_URL = 'IL_TUO_URL_DI_SUPABASE'; 
-        const SUPABASE_ANON_KEY = 'LA_TUA_CHIAVE_ANON_DI_SUPABASE';
+        const SUPABASE_URL = 'https://dytskuifwkgvdojnezoe.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'sb_publishable_eR-32KA6XBl87ejXvZepVw_WwICHNh1'; 
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Ridenominazione istanza per evitare il conflitto di sintassi del browser
+        let supabaseClient;
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch(e) {
+            alert("Errore inizializzazione client: " + e.message);
+        }
 
         // --- STATO APPLICAZIONE ---
         let sezioni = [];
-        let documenti = [];
+        let documentoList = [];
         let currentSezioneId = null;
 
-        // Inizializzazione al caricamento della pagina
         window.onload = function() {
             caricaDatiDalCloud();
         };
 
-        // --- RECUPERO DATI IN TEMPO REALE DA SUPABASE ---
         async function caricaDatiDalCloud() {
             try {
-                // Legge le sezioni
-                let { data: dataSez, error: errSez } = await supabase.from('sezioni').select('*').order('nome');
+                // Lettura Sezioni
+                let { data: dataSez, error: errSez } = await supabaseClient.from('sezioni').select('*').order('nome');
                 if (errSez) throw errSez;
                 sezioni = dataSez || [];
 
-                // Legge i documenti
-                let { data: dataDoc, error: errDoc } = await supabase.from('documenti').select('*');
+                // Lettura Documenti
+                let { data: dataDoc, error: errDoc } = await supabaseClient.from('documenti').select('*');
                 if (errDoc) throw errDoc;
-                documenti = dataDoc || [];
+                documentoList = dataDoc || [];
 
-                // Aggiorna l'interfaccia corretta
                 if (currentSezioneId) {
                     renderDocumenti();
                 } else {
                     renderSezioni();
                 }
             } catch (error) {
-                console.error("Errore di sincronizzazione:", error.message);
-                alert("Impossibile connettersi al database di Supabase. Controlla le chiavi API.");
+                alert("Errore di comunicazione Cloud Supabase:\n" + error.message);
             }
         }
 
-        // --- NAVIGAZIONE SCHERMATE (SPA) ---
         function mostraArchivio() {
             currentSezioneId = null;
             document.getElementById('view-sezione').style.display = 'none';
@@ -541,26 +431,24 @@
             currentSezioneId = sezioneId;
             const sez = sezioni.find(s => s.id === sezioneId);
             document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome}`;
-            
             document.getElementById('view-archivio').style.display = 'none';
             document.getElementById('view-sezione').style.display = 'block';
             renderDocumenti();
         }
 
-        // --- DISEGNO ELEMENTI INTERFACCIA (RENDER) ---
         function renderSezioni() {
             const griglia = document.getElementById('griglia-sezioni');
             griglia.innerHTML = '';
 
             sezioni.forEach(sez => {
-                const contaDoc = documenti.filter(d => d.sezione_id === sez.id).length;
+                const contaDoc = documentoList.filter(d => d.sezione_id === sez.id).length;
                 const testoDoc = contaDoc === 1 ? '1 Documento' : `${contaDoc} Documenti`;
 
                 const div = document.createElement('div');
                 div.className = 'busta';
                 div.onclick = () => mostraSezione(sez.id);
                 div.innerHTML = `
-                    <button class="btn-elimina-sezione" title="Cancella questa sezione" onclick="eliminaSezione(event, '${sez.id}')">
+                    <button class="btn-elimina-sezione" title="Cancella" onclick="eliminaSezione(event, '${sez.id}')">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                     <i class="fa-solid ${sez.icona} icona-cartella"></i>
@@ -570,7 +458,6 @@
                 griglia.appendChild(div);
             });
 
-            // Pulsante creazione fisso
             const btnAggiungi = document.createElement('div');
             btnAggiungi.className = 'busta busta-aggiungi';
             btnAggiungi.onclick = apriModalSezione;
@@ -586,21 +473,18 @@
             const msgVuoto = document.getElementById('tabella-vuota-messaggio');
             tbody.innerHTML = '';
 
-            const docFiltrati = documenti.filter(d => d.sezione_id === currentSezioneId);
+            const docFiltrati = documentoList.filter(d => d.sezione_id === currentSezioneId);
 
             if (docFiltrati.length === 0) {
                 msgVuoto.style.display = 'block';
                 return;
-            } else {
-                msgVuoto.style.display = 'none';
             }
+            msgVuoto.style.display = 'none';
 
-            // Ordina per scadenza imminente
             docFiltrati.sort((a, b) => new Date(a.data_scadenza) - new Date(b.data_scadenza));
 
             docFiltrati.forEach(doc => {
                 const tr = document.createElement('tr');
-                
                 const oggi = new Date();
                 const dataScad = new Date(doc.data_scadenza);
                 const diffTempo = dataScad - oggi;
@@ -622,7 +506,7 @@
                     <td>${dataFormattata}</td>
                     <td>${badgeStato}</td>
                     <td class="azioni" style="text-align: center;">
-                        <button title="Apri / Scarica File" onclick="apriFileRegale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i></button>
+                        <button title="Vedi File" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i></button>
                         <button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
@@ -630,7 +514,6 @@
             });
         }
 
-        // --- GESTIONE MODALI ---
         function apriModalSezione() { document.getElementById('modal-sezione').classList.add('active'); }
         function chiudiModalSezione() {
             document.getElementById('modal-sezione').classList.remove('active');
@@ -644,30 +527,24 @@
         }
         function aggiornaNomeFile(input) {
             const feedback = document.getElementById('file-selezionato-feedback');
-            if(input.files && input.files.length > 0) feedback.innerText = "📸 Acquisito: " + input.files[0].name;
+            if(input.files && input.files.length > 0) feedback.innerText = "📸 File pronto: " + input.files[0].name;
             else feedback.innerText = "";
         }
 
-        // --- AZIONI SCRITTURA/CANCELLAZIONE SU SUPABASE ---
         async function salvaNuovaSezione(event) {
             event.preventDefault();
             const nome = document.getElementById('input-nome-sezione').value;
             const icona = document.getElementById('input-icona-sezione').value;
 
-            const { error } = await supabase.from('sezioni').insert([{ nome: nome, icona: icona }]);
-            
-            if (error) {
-                alert("Errore durante il salvataggio: " + error.message);
-            } else {
-                chiudiModalSezione();
-                await caricaDatiDalCloud();
-            }
+            const { error } = await supabaseClient.from('sezioni').insert([{ nome: nome, icona: icona }]);
+            if (error) alert("Errore: " + error.message);
+            else { chiudiModalSezione(); await caricaDatiDalCloud(); }
         }
 
         async function eliminaSezione(event, idSezione) {
             event.stopPropagation();
-            if(confirm("Vuoi cancellare questa sezione e tutti i certificati al suo interno?")) {
-                const { error } = await supabase.from('sezioni').delete().eq('id', idSezione);
+            if(confirm("Vuoi cancellare questa sezione e tutti i suoi certificati?")) {
+                const { error } = await supabaseClient.from('sezioni').delete().eq('id', idSezione);
                 if (error) alert(error.message);
                 else await caricaDatiDalCloud();
             }
@@ -679,62 +556,39 @@
             const scadenza = document.getElementById('doc-scadenza').value;
             const fileInput = document.getElementById('doc-file');
 
-            if(fileInput.files.length === 0) {
-                alert("Seleziona o scatta una foto al documento!");
-                return;
-            }
+            if(fileInput.files.length === 0) { alert("Seleziona un file o scatta una foto!"); return; }
 
             const file = fileInput.files[0];
             const estensione = file.name.split('.').pop();
-            // Genera nome unico per evitare sovrascritture nello storage
             const percorsoFile = `${currentSezioneId}/${Date.now()}.${estensione}`;
 
-            // 1. Caricamento fisico del file nello Storage da 100GB
-            const { error: errUpload } = await supabase.storage.from('file_documenti').upload(percorsoFile, file);
-            
-            if (errUpload) {
-                alert("Errore caricamento file nel Cloud: " + errUpload.message);
-                return;
-            }
+            const { error: errUpload } = await supabaseClient.storage.from('file_documenti').upload(percorsoFile, file);
+            if (errUpload) { alert("Errore Cloud Storage: " + errUpload.message); return; }
 
-            // 2. Registrazione dei metadati e scadenza nel Database
-            const { error: errInsert } = await supabase.from('documenti').insert([{
+            const { error: errInsert } = await supabaseClient.from('documenti').insert([{
                 sezione_id: currentSezioneId,
                 nome: nome,
                 data_scadenza: scadenza,
                 file_path: percorsoFile
             }]);
 
-            if (errInsert) {
-                alert("Errore salvataggio dati: " + errInsert.message);
-            } else {
-                chiudiModalDocumento();
-                await caricaDatiDalCloud();
-            }
+            if (errInsert) alert("Errore Database: " + errInsert.message);
+            else { chiudiModalDocumento(); await caricaDatiDalCloud(); }
         }
 
         async function eliminaDocumento(idDoc, filePath) {
-            if(confirm("Vuoi rimuovere definitivamente questo documento dall'archivio cloud?")) {
-                // Elimina dal database
-                const { error: errDb } = await supabase.from('documenti').delete().eq('id', idDoc);
-                if (errDb) {
-                    alert(errDb.message);
-                    return;
-                }
-                // Elimina lo spazio nello storage
-                await supabase.storage.from('file_documenti').remove([filePath]);
+            if(confirm("Vuoi rimuovere il documento?")) {
+                const { error: errDb } = await supabaseClient.from('documenti').delete().eq('id', idDoc);
+                if (errDb) { alert(errDb.message); return; }
+                await supabaseClient.storage.from('file_documenti').remove([filePath]);
                 await caricaDatiDalCloud();
             }
         }
 
-        // Riceve il percorso e apre il PDF o la Foto in una nuova scheda del browser
-        function apriFileRegale(filePath) {
-            const { data } = supabase.storage.from('file_documenti').getPublicUrl(filePath);
-            if (data && data.publicUrl) {
-                window.open(data.publicUrl, '_blank');
-            } else {
-                alert("Impossibile recuperare il file dal server.");
-            }
+        function apriFileReale(filePath) {
+            const { data } = supabaseClient.storage.from('file_documenti').getPublicUrl(filePath);
+            if (data && data.publicUrl) window.open(data.publicUrl, '_blank');
+            else alert("Impossibile scaricare il file.");
         }
     </script>
 </body>
