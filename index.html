@@ -26,6 +26,7 @@
             --verde-ok: #38A169;
             --giallo-alert: #D69E2E;
             --rosso-allerta: #E53E3E;
+            --nero-scaduto: #1A202C;
             --overlay: rgba(27, 54, 93, 0.6);
         }
 
@@ -113,7 +114,7 @@
         .busta h3 {
             font-size: 1.15rem;
             color: var(--blu-navy);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-weight: 600;
             word-break: break-word;
         }
@@ -125,7 +126,26 @@
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: bold;
+            margin-bottom: 8px;
         }
+
+        /* STILI SEMAFORI ESTERNI SULLE BUSTE */
+        .semaforo-busta {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            width: 100%;
+            justify-content: center;
+            margin-top: auto;
+        }
+        .sem-verde { background-color: #C6F6D5; color: var(--verde-ok); }
+        .sem-giallo { background-color: #FEFCBF; color: #744210; }
+        .sem-rosso { background-color: #FED7D7; color: var(--rosso-allerta); }
+        .sem-nero { background-color: #2D3748; color: #FFFFFF; }
 
         .btn-elimina-sezione {
             position: absolute;
@@ -148,9 +168,10 @@
             border: 2px dashed var(--grigio-luce);
             border-top: 2px dashed var(--grigio-luce);
             box-shadow: none;
+            justify-content: center;
         }
         .busta-aggiungi::before { display: none; }
-        .busta-aggiungi i { color: var(--grigio-luce); }
+        .busta-aggiungi i { color: var(--grigio-luce); margin-bottom: 15px; }
         .busta-aggiungi:hover {
             border-color: var(--azzurro);
             background-color: rgba(0, 119, 200, 0.04);
@@ -223,8 +244,9 @@
             display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;
         }
         .status-ok { background-color: #C6F6D5; color: var(--verde-ok); }
-        .status-alert { background-color: #FEFCBF; color: var(--giallo-alert); }
-        .status-scaduto { background-color: #FED7D7; color: var(--rosso-allerta); }
+        .status-alert { background-color: #FEFCBF; color: #744210; }
+        .status-rosso { background-color: #FED7D7; color: var(--rosso-allerta); }
+        .status-nero { background-color: #CBD5E0; color: var(--nero-scaduto); text-decoration: line-through; }
 
         .azioni button {
             background: none; border: none; color: var(--grigio-luce); cursor: pointer; font-size: 1.1rem; margin-right: 12px; padding: 5px;
@@ -381,7 +403,6 @@
         const SUPABASE_URL = 'https://dytskuifwkgvdojnezoe.supabase.co'; 
         const SUPABASE_ANON_KEY = 'sb_publishable_eR-32KA6XBl87ejXvZepVw_WwICHNh1'; 
 
-        // Ridenominazione istanza per evitare il conflitto di sintassi del browser
         let supabaseClient;
         try {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -424,7 +445,7 @@
             currentSezioneId = null;
             document.getElementById('view-sezione').style.display = 'none';
             document.getElementById('view-archivio').style.display = 'block';
-            renderSezioni();
+            caricaDatiDalCloud(); // Ricarica per aggiornare i semafori al ritorno sulla home
         }
 
         function mostraSezione(sezioneId) {
@@ -441,8 +462,44 @@
             griglia.innerHTML = '';
 
             sezioni.forEach(sez => {
-                const contaDoc = documentoList.filter(d => d.sezione_id === sez.id).length;
+                const docFiltrati = documentoList.filter(d => d.sezione_id === sez.id);
+                const contaDoc = docFiltrati.length;
                 const testoDoc = contaDoc === 1 ? '1 Documento' : `${contaDoc} Documenti`;
+
+                // --- CALCOLO LOGICA SEMAFORO DELLA CARTELLA ---
+                let coloreSemaforo = 'sem-verde';
+                let testoSemaforo = 'In Regola';
+                let iconaSemaforo = 'fa-circle-check';
+
+                if (contaDoc > 0) {
+                    let minGiorniRimanenti = Infinity;
+                    const oggi = new Date();
+
+                    docFiltrati.forEach(doc => {
+                        const dataScad = new Date(doc.data_scadenza);
+                        const diffTempo = dataScad - oggi;
+                        const giorni = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+                        if (giorni < minGiorniRimanenti) {
+                            minGiorniRimanenti = giorni;
+                        }
+                    });
+
+                    if (minGiorniRimanenti < 0) {
+                        coloreSemaforo = 'sem-nero';
+                        testoSemaforo = 'SCADUTO!';
+                        iconaSemaforo = 'fa-circle-xmark';
+                    } else if (minGiorniRimanenti <= 30) {
+                        coloreSemaforo = 'sem-rosso';
+                        testoSemaforo = 'Scadenza imminente (<1 mese)';
+                        iconaSemaforo = 'fa-triangle-exclamation';
+                    } else if (minGiorniRimanenti <= 120) {
+                        coloreSemaforo = 'sem-giallo';
+                        testoSemaforo = 'Attenzione (<4 mesi)';
+                        iconaSemaforo = 'fa-circle-exclamation';
+                    }
+                } else {
+                    testoSemaforo = 'Vuota';
+                }
 
                 const div = document.createElement('div');
                 div.className = 'busta';
@@ -454,6 +511,9 @@
                     <i class="fa-solid ${sez.icona} icona-cartella"></i>
                     <h3>${sez.nome}</h3>
                     <span class="badge-documenti">${testoDoc}</span>
+                    <span class="semaforo-busta ${coloreSemaforo}">
+                        <i class="fa-solid ${iconaSemaforo}"></i> ${testoSemaforo}
+                    </span>
                 `;
                 griglia.appendChild(div);
             });
@@ -492,9 +552,11 @@
 
                 let badgeStato = '';
                 if (giorniRimanenti < 0) {
-                    badgeStato = `<span class="status status-scaduto"><i class="fa-solid fa-circle-xmark"></i> Scaduto</span>`;
+                    badgeStato = `<span class="status status-nero"><i class="fa-solid fa-circle-xmark"></i> Scaduto</span>`;
                 } else if (giorniRimanenti <= 30) {
-                    badgeStato = `<span class="status status-alert"><i class="fa-solid fa-triangle-exclamation"></i> In Scadenza</span>`;
+                    badgeStato = `<span class="status status-rosso"><i class="fa-solid fa-triangle-exclamation"></i> Critico (<30gg)</span>`;
+                } else if (giorniRimanenti <= 120) {
+                    badgeStato = `<span class="status status-alert"><i class="fa-solid fa-circle-exclamation"></i> Giallo (<4 mesi)</span>`;
                 } else {
                     badgeStato = `<span class="status status-ok"><i class="fa-solid fa-circle-check"></i> Valido</span>`;
                 }
