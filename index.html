@@ -45,10 +45,71 @@
             margin: 0 auto;
         }
 
+        /* --- SCHERMATA LOGIN --- */
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+        }
+
+        .login-box {
+            background-color: var(--bianco);
+            padding: 40px 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(27, 54, 93, 0.08);
+            border: 1px solid rgba(27, 54, 93, 0.04);
+            text-align: center;
+        }
+
+        .login-box i.logo-login {
+            font-size: 3.5rem;
+            color: var(--azzurro);
+            margin-bottom: 15px;
+        }
+
+        .login-box h2 {
+            color: var(--blu-navy);
+            margin-bottom: 8px;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .login-box p {
+            color: var(--grigio-luce);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .login-box .form-group {
+            text-align: left;
+        }
+
+        .btn-login {
+            width: 100%;
+            background-color: var(--blu-navy);
+            color: var(--bianco);
+            border: none;
+            padding: 13px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: var(--azzurro);
+        }
+
         /* --- INTESTAZIONE --- */
         .header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 35px;
+            position: relative;
         }
 
         .header h1 {
@@ -68,7 +129,71 @@
             letter-spacing: 0.3px;
         }
 
-        /* --- SCHERMATA 1: INTERFACCIA ARCHIVIO (NUOVA GRIGLIA PRESTIGIO) --- */
+        .btn-logout {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #FFF5F5;
+            color: var(--rosso-allerta);
+            border: 1px solid #FED7D7;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: none;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover {
+            background-color: var(--rosso-allerta);
+            color: var(--bianco);
+        }
+
+        /* --- SELETTORE VISTE (TAB NAVIGATION) --- */
+        .nav-viste {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .tab-button {
+            background-color: #E2E8F0;
+            color: var(--grigio-testo);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-button:hover {
+            background-color: #CBD5E0;
+            color: var(--blu-navy);
+        }
+
+        .tab-button.attivo {
+            background-color: var(--azzurro);
+            color: var(--bianco);
+            box-shadow: 0 4px 12px rgba(0, 119, 200, 0.2);
+        }
+
+        .tab-button.attivo.tab-privato {
+            background-color: var(--blu-navy);
+            box-shadow: 0 4px 12px rgba(27, 54, 93, 0.2);
+        }
+
+        /* --- INTERFACCIA APPLICAZIONE (NASCONDI DI DEFAULT) --- */
+        .app-content {
+            display: none;
+        }
+
+        /* --- SCHERMATA 1: INTERFACCIA ARCHIVIO (GRIGLIA PRESTIGIO) --- */
         .archivio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
@@ -76,7 +201,6 @@
             margin-top: 20px;
         }
 
-        /* Stile grafico "Vera Cartellina 3D" */
         .busta {
             background-color: var(--bianco);
             border-radius: 0 16px 16px 16px;
@@ -92,7 +216,6 @@
             border: 1px solid rgba(27, 54, 93, 0.04);
         }
 
-        /* Linguetta sporgente realistica della cartellina */
         .busta::before {
             content: '';
             position: absolute;
@@ -105,18 +228,22 @@
             transition: background-color 0.3s ease;
         }
 
-        /* Effetti al passaggio del mouse o tocco */
         .busta:hover {
             transform: translateY(-6px);
             box-shadow: 0 22px 40px rgba(27, 54, 93, 0.12);
             border-color: rgba(0, 119, 200, 0.3);
         }
 
-        .busta:hover::before {
+        .busta:hover::before { background-color: var(--blu-navy); }
+
+        /* Cartella contrassegnata come privata visivamente */
+        .busta.busta-privata::before {
+            background-color: #4A5568;
+        }
+        .busta.busta-privata:hover::before {
             background-color: var(--blu-navy);
         }
 
-        /* Animazione e sfumatura icona interna */
         .busta i.icona-cartella {
             font-size: 3.6rem;
             background: linear-gradient(135deg, var(--blu-navy), var(--azzurro));
@@ -126,9 +253,7 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .busta:hover i.icona-cartella {
-            transform: scale(1.12) rotate(3deg);
-        }
+        .busta:hover i.icona-cartella { transform: scale(1.12) rotate(3deg); }
 
         .busta h3 {
             font-size: 1.2rem;
@@ -149,7 +274,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* NUOVI SEMAFORI MODERNI TIPO "PILLOLA" */
         .semaforo-busta {
             display: inline-flex;
             align-items: center;
@@ -185,7 +309,6 @@
 
         .busta:hover .btn-elimina-sezione { color: var(--rosso-allerta); }
 
-        /* Cartellina speciale di aggiunta elegante */
         .busta-aggiungi {
             background-color: rgba(27, 54, 93, 0.02);
             border: 2px dashed #CBD5E0;
@@ -295,7 +418,7 @@
 
         .tabella-vuota { padding: 50px; text-align: center; color: var(--grigio-luce); font-style: italic; }
 
-        /* --- MODALI --- */
+        /* --- MODALI & INPUT --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay);
             display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 1000; padding: 15px;
@@ -306,9 +429,22 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--sfondo); padding-bottom: 14px; }
         .modal-header h2 { color: var(--blu-navy); font-size: 1.4rem; font-weight: 700; }
         .btn-chiudi-modal { background: none; border: none; font-size: 1.6rem; color: var(--grigio-luce); cursor: pointer; }
+        
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: var(--blu-navy); font-weight: 600; font-size: 0.9rem; }
-        .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+        
+        .form-group input[type="text"], 
+        .form-group input[type="password"], 
+        .form-group input[type="date"], 
+        .form-group select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #E2E8F0; 
+            border-radius: 10px; 
+            font-size: 0.95rem; 
+            outline: none; 
+            transition: border-color 0.2s; 
+        }
         .form-group input:focus, .form-group select:focus { border-color: var(--azzurro); }
 
         .file-upload-wrapper { position: relative; border: 2px dashed var(--grigio-luce); border-radius: 10px; padding: 26px; text-align: center; background-color: var(--sfondo); cursor: pointer; transition: border-color 0.2s; }
@@ -336,51 +472,80 @@
 
     <div class="container">
         <div class="header">
+            <button class="btn-logout" id="botton-logout" onclick="eseguiLogout()"><i class="fa-solid fa-right-from-bracket"></i> Esci</button>
             <h1><i class="fa-solid fa-anchor"></i> Marina Porto Antico</h1>
             <p>Scadenziario Ufficiale Documenti & Certificazioni</p>
         </div>
 
-        <div id="view-archivio">
-            <div class="archivio-grid" id="griglia-sezioni">
-                <div style="padding: 30px; text-align: center; color: var(--grigio-luce); width: 100%; font-weight: 600;">
-                    <i class="fa-solid fa-spinner fa-spin"></i> Sincronizzazione sicura con il cloud di Marina Porto Antico...
-                </div>
+        <div id="view-login" class="login-wrapper">
+            <div class="login-box">
+                <i class="fa-solid fa-shield-halved logo-login"></i>
+                <h2>Accesso Riservato</h2>
+                <p>Inserisci le tue credenziali Marina Porto Antico</p>
+                <form onsubmit="eseguiLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="text" id="login-email" placeholder="nome@esempio.it" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label for="login-password">Password di Sicurezza</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-login">Accedi al Sistema</button>
+                </form>
             </div>
         </div>
 
-        <div id="view-sezione" class="view-sezione">
-            <div onclick="mostraArchivio()" class="btn-indietro">
-                <i class="fa-solid fa-arrow-left"></i> Torna all'Archivio Principale
-            </div>
-            <div class="header-sezione">
-                <h2 id="titolo-sezione">Caricamento...</h2>
-                <button class="btn-azione-principale" onclick="apriModalDocumento(null)">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Carica Documento Nuovo
+        <div id="contenuto-principale-app" class="app-content">
+            
+            <div class="nav-viste" id="navigazione-viste">
+                <button class="tab-button attivo" id="btn-vista-porto" onclick="cambiaVista('porto')">
+                    <i class="fa-solid fa-ship"></i> Vista Porto (Condivisa)
+                </button>
+                <button class="tab-button tab-privato" id="btn-vista-personale" onclick="cambiaVista('personale')">
+                    <i class="fa-solid fa-lock"></i> Vista Personale (Riservata)
                 </button>
             </div>
-            <div class="tabella-wrapper">
-                <table class="tabella-documenti">
-                    <thead>
-                        <tr>
-                            <th>Nome Documento</th>
-                            <th>Scadenza / Stato</th>
-                            <th>Stato</th>
-                            <th style="width: 140px; text-align: center;">Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody id="lista-documenti"></tbody>
-                </table>
-                <div id="tabella-vuota-messaggio" class="tabella-vuota" style="display: none;">
-                    Nessun documento presente. Clicca su "Carica Documento" per iniziare.
+
+            <div id="view-archivio">
+                <div class="archivio-grid" id="griglia-sezioni"></div>
+            </div>
+
+            <div id="view-sezione" class="view-sezione">
+                <div onclick="mostraArchivio()" class="btn-indietro">
+                    <i class="fa-solid fa-arrow-left"></i> Torna all'Archivio Principale
+                </div>
+                <div class="header-sezione">
+                    <h2 id="titolo-sezione">Caricamento...</h2>
+                    <button class="btn-azione-principale" onclick="apriModalDocumento(null)">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Carica Documento Nuovo
+                    </button>
+                </div>
+                <div class="tabella-wrapper">
+                    <table class="tabella-documenti">
+                        <thead>
+                            <tr>
+                                <th>Nome Documento</th>
+                                <th>Scadenza / Stato</th>
+                                <th>Stato</th>
+                                <th style="width: 140px; text-align: center;">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-documenti"></tbody>
+                    </table>
+                    <div id="tabella-vuota-messaggio" class="tabella-vuota" style="display: none;">
+                        Nessun documento presente. Clicca su "Carica Documento" per iniziare.
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 
     <div class="modal-overlay" id="modal-sezione">
         <div class="modal-box">
             <div class="modal-header">
-                <h2><i class="fa-solid fa-folder-plus"></i> Nuova Cartella Archivio</h2>
+                <h2 id="titolo-modal-sezione"><i class="fa-solid fa-folder-plus"></i> Nuova Cartella Archivio</h2>
                 <button class="btn-chiudi-modal" onclick="chiudiModalSezione()">&times;</button>
             </div>
             <form id="form-nuova-sezione" onsubmit="salvaNuovaSezione(event)">
@@ -456,17 +621,79 @@
         let documentoList = [];
         let currentSezioneId = null;
         let idDocumentoDaRinnovare = null;
+        let vistaAttuale = 'porto'; // 'porto' o 'personale'
+        let currentUserId = null;
 
+        // ASCOLTATORE DI STATO AUTOMATICO (Controlla se l'utente è connesso o disconnesso)
         window.onload = function() {
-            caricaDatiDalCloud();
+            supabaseClient.auth.onAuthStateChange((event, session) => {
+                if (session) {
+                    currentUserId = session.user.id;
+                    document.getElementById('view-login').style.display = 'none';
+                    document.getElementById('contenuto-principale-app').style.display = 'block';
+                    document.getElementById('botton-logout').style.display = 'block';
+                    caricaDatiDalCloud();
+                } else {
+                    currentUserId = null;
+                    document.getElementById('view-login').style.display = 'flex';
+                    document.getElementById('contenuto-principale-app').style.display = 'none';
+                    document.getElementById('botton-logout').style.display = 'none';
+                }
+            });
         };
+
+        // FUNZIONE SWITCH TRA VISTA PUBBLICA E PRIVATA
+        function cambiaVista(tipoVista) {
+            vistaAttuale = tipoVista;
+            
+            // Aggiorna l'aspetto dei pulsanti tab
+            document.getElementById('btn-vista-porto').classList.remove('attivo');
+            document.getElementById('btn-vista-personale').classList.remove('attivo');
+            
+            if (tipoVista === 'porto') {
+                document.getElementById('btn-vista-porto').classList.add('attivo');
+            } else {
+                document.getElementById('btn-vista-personale').classList.add('attivo');
+            }
+            
+            currentSezioneId = null;
+            document.getElementById('view-sezione').style.display = 'none';
+            document.getElementById('view-archivio').style.display = 'block';
+            renderSezioni();
+        }
+
+        // FUNZIONE LOGIN DI SICUREZZA REALE
+        async function eseguiLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                alert("❌ Errore di Accesso:\n" + error.message + "\n\nVerifica l'email e la password inserite.");
+            }
+        }
+
+        // FUNZIONE LOGOUT DI SICUREZZA
+        async function eseguiLogout() {
+            if(confirm("Vuoi disconnetterti dall'applicazione?")) {
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) alert("Errore durante l'uscita: " + error.message);
+            }
+        }
 
         async function caricaDatiDalCloud() {
             try {
+                // Scarichiamo tutte le sezioni
                 let { data: dataSez, error: errSez } = await supabaseClient.from('sezioni').select('*').order('nome');
                 if (errSez) throw errSez;
                 sezioni = dataSez || [];
 
+                // Scarichiamo tutti i documenti
                 let { data: dataDoc, error: errDoc } = await supabaseClient.from('documenti').select('*');
                 if (errDoc) throw errDoc;
                 documentoList = dataDoc || [];
@@ -491,7 +718,7 @@
         function mostraSezione(sezioneId) {
             currentSezioneId = sezioneId;
             const sez = sezioni.find(s => s.id === sezioneId);
-            document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome}`;
+            document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome} ${sez.privato ? '<span style="font-size:1rem; vertical-align:middle; color:var(--grigio-luce);"><i class="fa-solid fa-lock"></i> Riservata</span>' : ''}`;
             document.getElementById('view-archivio').style.display = 'none';
             document.getElementById('view-sezione').style.display = 'block';
             renderDocumenti();
@@ -501,7 +728,16 @@
             const griglia = document.getElementById('griglia-sezioni');
             griglia.innerHTML = '';
 
-            sezioni.forEach(sez => {
+            // FILTRAGGIO DI SICUREZZA DELLE CARTELLINE IN BASE ALLA VISTA SELEZIONATA
+            const sezioniFiltrate = sezioni.filter(s => {
+                if (vistaAttuale === 'porto') {
+                    return s.privato === false || s.privato === null; // Solo cartelle pubbliche del porto
+                } else {
+                    return s.privato === true && s.user_id === currentUserId; // Solo cartelle private del mio account
+                }
+            });
+
+            sezioniFiltrate.forEach(sez => {
                 const docDellaSezione = documentoList.filter(d => d.sezione_id === sez.id);
                 const docAttivi = docDellaSezione.filter(d => !d.archiviato);
                 
@@ -545,7 +781,7 @@
                 }
 
                 const div = document.createElement('div');
-                div.className = 'busta';
+                div.className = sez.privato ? 'busta busta-privata' : 'busta';
                 div.onclick = () => mostraSezione(sez.id);
                 div.innerHTML = `
                     <button class="btn-elimina-sezione" title="Cancella" onclick="eliminaSezione(event, '${sez.id}')">
@@ -566,7 +802,7 @@
             btnAggiungi.onclick = apriModalSezione;
             btnAggiungi.innerHTML = `
                 <i class="fa-solid fa-plus icona-cartella"></i>
-                <h3>Crea Nuova Sezione</h3>
+                <h3>${vistaAttuale === 'porto' ? 'Crea Sezione Porto' : 'Crea Sezione Privata'}</h3>
             `;
             griglia.appendChild(btnAggiungi);
         }
@@ -609,7 +845,7 @@
                         badgeStato = `<span class="status status-nero"><i class="fa-solid fa-circle-xmark"></i> Scaduto</span>`;
                     } else if (giorniRimanenti <= 30) {
                         badgeStato = `<span class="status status-rosso"><i class="fa-solid fa-triangle-exclamation"></i> Critico (<30gg)</span>`;
-                    } else if (giorniRimanenti <= 120) {
+                    } else if (giorniRimanents <= 120) {
                         badgeStato = `<span class="status status-alert"><i class="fa-solid fa-circle-exclamation"></i> Giallo (<4 mesi)</span>`;
                     } else {
                         badgeStato = `<span class="status status-ok"><i class="fa-solid fa-circle-check"></i> Valido</span>`;
@@ -633,7 +869,15 @@
             });
         }
 
-        function apriModalSezione() { document.getElementById('modal-sezione').classList.add('active'); }
+        function apriModalSezione() {
+            const titolo = document.getElementById('titolo-modal-sezione');
+            if (vistaAttuale === 'personale') {
+                titolo.innerHTML = `<i class="fa-solid fa-lock"></i> Nuova Cartella Riservata`;
+            } else {
+                titolo.innerHTML = `<i class="fa-solid fa-folder-plus"></i> Nuova Cartella Archivio Porto`;
+            }
+            document.getElementById('modal-sezione').classList.add('active'); 
+        }
         
         function chiudiModalSezione() {
             document.getElementById('modal-sezione').classList.remove('active');
@@ -678,7 +922,17 @@
             const nome = document.getElementById('input-nome-sezione').value;
             const icona = document.getElementById('input-icona-sezione').value;
 
-            const { error } = await supabaseClient.from('sezioni').insert([{ nome: nome, icona: icona }]);
+            // Logica intelligente: se siamo nella scheda personale, impostiamo privato = true e colleghiamo l'user_id
+            const èPrivato = (vistaAttuale === 'personale');
+            const utenteProprietario = èPrivato ? currentUserId : null;
+
+            const { error } = await supabaseClient.from('sezioni').insert([{ 
+                nome: nome, 
+                icona: icona,
+                privato: èPrivato,
+                user_id: utenteProprietario
+            }]);
+            
             if (error) alert("Errore: " + error.message);
             else { chiudiModalSezione(); await caricaDatiDalCloud(); }
         }
