@@ -240,18 +240,26 @@
             background-color: #EDF2F7; color: var(--grigio-testo); font-weight: 600; text-transform: uppercase; font-size: 0.8rem;
         }
 
+        /* Stile per riga storicizzata */
+        .riga-archiviato {
+            background-color: #F7FAFC;
+            opacity: 0.65;
+        }
+
         .status {
             display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;
         }
         .status-ok { background-color: #C6F6D5; color: var(--verde-ok); }
         .status-alert { background-color: #FEFCBF; color: #744210; }
         .status-rosso { background-color: #FED7D7; color: var(--rosso-allerta); }
-        .status-nero { background-color: #CBD5E0; color: var(--nero-scaduto); text-decoration: line-through; }
+        .status-nero { background-color: #2D3748; color: #FFFFFF; }
+        .status-archiviato { background-color: #E2E8F0; color: #4A5568; }
 
         .azioni button {
             background: none; border: none; color: var(--grigio-luce); cursor: pointer; font-size: 1.1rem; margin-right: 12px; padding: 5px;
         }
         .azioni button:hover { color: var(--azzurro); }
+        .azioni button.btn-rinnova:hover { color: var(--giallo-alert); }
         .azioni button.btn-elimina:hover { color: var(--rosso-allerta); }
 
         .tabella-vuota { padding: 40px; text-align: center; color: var(--grigio-luce); font-style: italic; }
@@ -313,8 +321,8 @@
             </div>
             <div class="header-sezione">
                 <h2 id="titolo-sezione">Caricamento...</h2>
-                <button class="btn-azione-principale" onclick="apriModalDocumento()">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Carica Documento
+                <button class="btn-azione-principale" onclick="apriModalDocumento(null)">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Carica Documento Nuovo
                 </button>
             </div>
             <div class="tabella-wrapper">
@@ -322,9 +330,9 @@
                     <thead>
                         <tr>
                             <th>Nome Documento</th>
-                            <th>Scadenza</th>
+                            <th>Scadenza / Stato</th>
                             <th>Stato</th>
-                            <th style="width: 90px; text-align: center;">Azioni</th>
+                            <th style="width: 130px; text-align: center;">Azioni</th>
                         </tr>
                     </thead>
                     <tbody id="lista-documenti"></tbody>
@@ -369,7 +377,7 @@
     <div class="modal-overlay" id="modal-documento">
         <div class="modal-box">
             <div class="modal-header">
-                <h2><i class="fa-solid fa-file-circle-plus"></i> Archivia Documento</h2>
+                <h2 id="titolo-modal-documento"><i class="fa-solid fa-file-circle-plus"></i> Archivia Documento</h2>
                 <button class="btn-chiudi-modal" onclick="chiudiModalDocumento()">&times;</button>
             </div>
             <form id="form-nuovo-documento" onsubmit="salvaNuovoDocumento(event)">
@@ -414,6 +422,7 @@
         let sezioni = [];
         let documentoList = [];
         let currentSezioneId = null;
+        let idDocumentoDaRinnovare = null; // Memorizza se stiamo sostituendo un vecchio documento
 
         window.onload = function() {
             caricaDatiDalCloud();
@@ -445,7 +454,7 @@
             currentSezioneId = null;
             document.getElementById('view-sezione').style.display = 'none';
             document.getElementById('view-archivio').style.display = 'block';
-            caricaDatiDalCloud(); // Ricarica per aggiornare i semafori al ritorno sulla home
+            caricaDatiDalCloud();
         }
 
         function mostraSezione(sezioneId) {
@@ -462,20 +471,23 @@
             griglia.innerHTML = '';
 
             sezioni.forEach(sez => {
-                const docFiltrati = documentoList.filter(d => d.sezione_id === sez.id);
-                const contaDoc = docFiltrati.length;
+                // Filtriamo solo i documenti ATTIVI per il calcolo dei semafori
+                const docDellaSezione = documentoList.filter(d => d.sezione_id === sez.id);
+                const docAttivi = docDellaSezione.filter(d => !d.archiviato);
+                
+                const contaDoc = docDellaSezione.length;
                 const testoDoc = contaDoc === 1 ? '1 Documento' : `${contaDoc} Documenti`;
 
-                // --- CALCOLO LOGICA SEMAFORO DELLA CARTELLA ---
+                // --- CALCOLO LOGICA SEMAFORO (Solo su documenti NON archiviati) ---
                 let coloreSemaforo = 'sem-verde';
                 let testoSemaforo = 'In Regola';
                 let iconaSemaforo = 'fa-circle-check';
 
-                if (contaDoc > 0) {
+                if (docAttivi.length > 0) {
                     let minGiorniRimanenti = Infinity;
                     const oggi = new Date();
 
-                    docFiltrati.forEach(doc => {
+                    docAttivi.forEach(doc => {
                         const dataScad = new Date(doc.data_scadenza);
                         const diffTempo = dataScad - oggi;
                         const giorni = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
@@ -497,6 +509,8 @@
                         testoSemaforo = 'Attenzione (<4 mesi)';
                         iconaSemaforo = 'fa-circle-exclamation';
                     }
+                } else if (docDellaSezione.length > 0) {
+                    testoSemaforo = 'Storico Archiviato';
                 } else {
                     testoSemaforo = 'Vuota';
                 }
@@ -541,35 +555,51 @@
             }
             msgVuoto.style.display = 'none';
 
-            docFiltrati.sort((a, b) => new Date(a.data_scadenza) - new Date(b.data_scadenza));
+            // ORDINAMENTO INTELLIGENTE: Prima gli attivi (scadenza vicina), poi gli archiviati in fondo
+            docFiltrati.sort((a, b) => {
+                if (a.archiviato !== b.archiviato) return a.archiviato ? 1 : -1;
+                return new Date(a.data_scadenza) - new Date(b.data_scadenza);
+            });
 
             docFiltrati.forEach(doc => {
                 const tr = document.createElement('tr');
+                if (doc.archiviato) tr.className = 'riga-archiviato';
+
                 const oggi = new Date();
                 const dataScad = new Date(doc.data_scadenza);
                 const diffTempo = dataScad - oggi;
                 const giorniRimanenti = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
 
                 let badgeStato = '';
-                if (giorniRimanenti < 0) {
-                    badgeStato = `<span class="status status-nero"><i class="fa-solid fa-circle-xmark"></i> Scaduto</span>`;
-                } else if (giorniRimanenti <= 30) {
-                    badgeStato = `<span class="status status-rosso"><i class="fa-solid fa-triangle-exclamation"></i> Critico (<30gg)</span>`;
-                } else if (giorniRimanenti <= 120) {
-                    badgeStato = `<span class="status status-alert"><i class="fa-solid fa-circle-exclamation"></i> Giallo (<4 mesi)</span>`;
+                let bottoniAzione = `<button title="Vedi File" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i></button>`;
+
+                if (doc.archiviato) {
+                    badgeStato = `<span class="status status-archiviato"><i class="fa-solid fa-box-archive"></i> Archivio Storico</span>`;
+                    bottoniAzione += `<button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash"></i></button>`;
                 } else {
-                    badgeStato = `<span class="status status-ok"><i class="fa-solid fa-circle-check"></i> Valido</span>`;
+                    if (giorniRimanenti < 0) {
+                        badgeStato = `<span class="status status-nero"><i class="fa-solid fa-circle-xmark"></i> Scaduto</span>`;
+                    } else if (giorniRimanenti <= 30) {
+                        badgeStato = `<span class="status status-rosso"><i class="fa-solid fa-triangle-exclamation"></i> Critico (<30gg)</span>`;
+                    } else if (giorniRimanenti <= 120) {
+                        badgeStato = `<span class="status status-alert"><i class="fa-solid fa-circle-exclamation"></i> Giallo (<4 mesi)</span>`;
+                    } else {
+                        badgeStato = `<span class="status status-ok"><i class="fa-solid fa-circle-check"></i> Valido</span>`;
+                    }
+                    
+                    // Se attivo, aggiungiamo il tasto 🔄 per aggiornare/archiviare
+                    bottoniAzione += `<button title="Aggiorna / Rinnova" class="btn-rinnova" onclick="apriModalDocumento('${doc.id}')"><i class="fa-solid fa-rotate"></i></button>`;
+                    bottoniAzione += `<button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash"></i></button>`;
                 }
 
                 const dataFormattata = dataScad.toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
 
                 tr.innerHTML = `
                     <td><strong>${doc.nome}</strong></td>
-                    <td>${dataFormattata}</td>
+                    <td>${doc.archiviato ? '---' : dataFormattata}</td>
                     <td>${badgeStato}</td>
                     <td class="azioni" style="text-align: center;">
-                        <button title="Vedi File" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i></button>
-                        <button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash"></i></button>
+                        ${bottoniAzione}
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -577,16 +607,35 @@
         }
 
         function apriModalSezione() { document.getElementById('modal-sezione').classList.add('active'); }
+        
         function chiudiModalSezione() {
             document.getElementById('modal-sezione').classList.remove('active');
             document.getElementById('form-nuova-sezione').reset();
         }
-        function apriModalDocumento() { document.getElementById('modal-documento').classList.add('active'); }
+
+        function apriModalDocumento(idDocDaRinnovare = null) {
+            idDocumentoDaRinnovare = idDocDaRinnovare;
+            const titolo = document.getElementById('titolo-modal-documento');
+            const inputNome = document.getElementById('doc-nome');
+            
+            if (idDocumentoDaRinnovare) {
+                titolo.innerHTML = `<i class="fa-solid fa-rotate"></i> Rinnova e Archivia Vecchio Certificato`;
+                const vecchioDoc = documentoList.find(d => d.id === idDocumentoDaRinnovare);
+                if (vecchioDoc) inputNome.value = vecchioDoc.nome; // Pre-compila il nome per comodità
+            } else {
+                titolo.innerHTML = `<i class="fa-solid fa-file-circle-plus"></i> Archivia Documento Nuovo`;
+            }
+            
+            document.getElementById('modal-documento').classList.add('active');
+        }
+
         function chiudiModalDocumento() {
             document.getElementById('modal-documento').classList.remove('active');
             document.getElementById('form-nuovo-documento').reset();
             document.getElementById('file-selezionato-feedback').innerText = '';
+            idDocumentoDaRinnovare = null;
         }
+
         function aggiornaNomeFile(input) {
             const feedback = document.getElementById('file-selezionato-feedback');
             if(input.files && input.files.length > 0) feedback.innerText = "📸 File pronto: " + input.files[0].name;
@@ -605,7 +654,7 @@
 
         async function eliminaSezione(event, idSezione) {
             event.stopPropagation();
-            if(confirm("Vuoi cancellare questa sezione e tutti i suoi certificati?")) {
+            if(confirm("Vuoi cancellare questa sezione e tutti i suoi certificati storici ed attivi?")) {
                 const { error } = await supabaseClient.from('sezioni').delete().eq('id', idSezione);
                 if (error) alert(error.message);
                 else await caricaDatiDalCloud();
@@ -624,14 +673,30 @@
             const estensione = file.name.split('.').pop();
             const percorsoFile = `${currentSezioneId}/${Date.now()}.${estensione}`;
 
+            // 1. Carichiamo il file fisicamente nello storage cloud
             const { error: errUpload } = await supabaseClient.storage.from('file_documenti').upload(percorsoFile, file);
             if (errUpload) { alert("Errore Cloud Storage: " + errUpload.message); return; }
 
+            // 2. Se è un RINNOVO, aggiorniamo il vecchio documento impostando archiviato = true
+            if (idDocumentoDaRinnovare) {
+                const { error: errArchive } = await supabaseClient
+                    .from('documenti')
+                    .update({ archiviato: true })
+                    .eq('id', idDocumentoDaRinnovare);
+                
+                if (errArchive) {
+                    alert("Errore durante l'archiviazione del vecchio documento: " + errArchive.message);
+                    return;
+                }
+            }
+
+            // 3. Inseriamo il nuovo record attivo
             const { error: errInsert } = await supabaseClient.from('documenti').insert([{
                 sezione_id: currentSezioneId,
                 nome: nome,
                 data_scadenza: scadenza,
-                file_path: percorsoFile
+                file_path: percorsoFile,
+                archiviato: false
             }]);
 
             if (errInsert) alert("Errore Database: " + errInsert.message);
@@ -639,7 +704,7 @@
         }
 
         async function eliminaDocumento(idDoc, filePath) {
-            if(confirm("Vuoi rimuovere il documento?")) {
+            if(confirm("Vuoi rimuovere definitivamente questo file (attivo o storico) dal cloud?")) {
                 const { error: errDb } = await supabaseClient.from('documenti').delete().eq('id', idDoc);
                 if (errDb) { alert(errDb.message); return; }
                 await supabaseClient.storage.from('file_documenti').remove([filePath]);
