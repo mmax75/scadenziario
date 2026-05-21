@@ -36,124 +36,146 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--sfondo);
             color: #333;
-            padding: 30px 15px;
+            padding: 40px 15px;
             -webkit-tap-highlight-color: transparent;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1140px;
             margin: 0 auto;
         }
 
         /* --- INTESTAZIONE --- */
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
         .header h1 {
             color: var(--blu-navy);
-            font-size: 2.2rem;
-            margin-bottom: 8px;
+            font-size: 2.4rem;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 14px;
+            font-weight: 700;
         }
 
         .header p {
             color: var(--grigio-luce);
-            font-size: 1.05rem;
+            font-size: 1.1rem;
+            letter-spacing: 0.3px;
         }
 
-        /* --- SCHERMATA 1: INTERFACCIA ARCHIVIO (GRIGLIA BUSTE) --- */
+        /* --- SCHERMATA 1: INTERFACCIA ARCHIVIO (NUOVA GRIGLIA PRESTIGIO) --- */
         .archivio-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 35px;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 40px;
             margin-top: 20px;
         }
 
+        /* Stile grafico "Vera Cartellina 3D" */
         .busta {
             background-color: var(--bianco);
-            border-radius: 0 12px 12px 12px;
-            padding: 35px 20px 25px 20px;
+            border-radius: 0 16px 16px 16px;
+            padding: 40px 24px 24px 24px;
             position: relative;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.04);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 12px 30px rgba(27, 54, 93, 0.05);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
-            border-top: 4px solid var(--azzurro);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
+            border: 1px solid rgba(27, 54, 93, 0.04);
         }
 
+        /* Linguetta sporgente realistica della cartellina */
         .busta::before {
             content: '';
             position: absolute;
-            top: -18px;
-            left: -4px;
-            width: 110px;
-            height: 18px;
+            top: -16px;
+            left: -1px;
+            width: 105px;
+            height: 16px;
             background-color: var(--azzurro);
-            border-radius: 10px 10px 0 0;
+            border-radius: 8px 8px 0 0;
+            transition: background-color 0.3s ease;
         }
 
+        /* Effetti al passaggio del mouse o tocco */
         .busta:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+            transform: translateY(-6px);
+            box-shadow: 0 22px 40px rgba(27, 54, 93, 0.12);
+            border-color: rgba(0, 119, 200, 0.3);
         }
 
+        .busta:hover::before {
+            background-color: var(--blu-navy);
+        }
+
+        /* Animazione e sfumatura icona interna */
         .busta i.icona-cartella {
-            font-size: 3.2rem;
-            color: var(--blu-navy);
-            margin-bottom: 15px;
+            font-size: 3.6rem;
+            background: linear-gradient(135deg, var(--blu-navy), var(--azzurro));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 18px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .busta:hover i.icona-cartella {
+            transform: scale(1.12) rotate(3deg);
         }
 
         .busta h3 {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             color: var(--blu-navy);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
             word-break: break-word;
         }
 
         .badge-documenti {
-            background-color: var(--sfondo);
-            color: var(--grigio-testo);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 8px;
+            background-color: #EDF2F7;
+            color: var(--blu-navy);
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.3px;
         }
 
-        /* STILI SEMAFORI ESTERNI SULLE BUSTE */
+        /* NUOVI SEMAFORI MODERNI TIPO "PILLOLA" */
         .semaforo-busta {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            padding: 5px 12px;
-            border-radius: 20px;
+            gap: 7px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 30px;
             width: 100%;
             justify-content: center;
             margin-top: auto;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .sem-verde { background-color: #C6F6D5; color: var(--verde-ok); }
-        .sem-giallo { background-color: #FEFCBF; color: #744210; }
-        .sem-rosso { background-color: #FED7D7; color: var(--rosso-allerta); }
-        .sem-nero { background-color: #2D3748; color: #FFFFFF; }
+        .sem-verde { background-color: #E6FFFA; color: var(--verde-ok); border: 1px solid #B2F5EA; }
+        .sem-giallo { background-color: #FFFDF5; color: #B7791F; border: 1px solid #FEEBC8; }
+        .sem-rosso { background-color: #FFF5F5; color: var(--rosso-allerta); border: 1px solid #FED7D7; }
+        .sem-nero { background-color: #1A202C; color: #FFFFFF; }
 
         .btn-elimina-sezione {
             position: absolute;
-            top: 10px;
-            right: 12px;
+            top: 12px;
+            right: 14px;
             background: none;
             border: none;
-            color: #CBD5E0;
+            color: #E2E8F0;
             font-size: 1rem;
             cursor: pointer;
             transition: color 0.2s;
@@ -163,20 +185,27 @@
 
         .busta:hover .btn-elimina-sezione { color: var(--rosso-allerta); }
 
+        /* Cartellina speciale di aggiunta elegante */
         .busta-aggiungi {
-            background-color: transparent;
-            border: 2px dashed var(--grigio-luce);
-            border-top: 2px dashed var(--grigio-luce);
+            background-color: rgba(27, 54, 93, 0.02);
+            border: 2px dashed #CBD5E0;
             box-shadow: none;
             justify-content: center;
         }
         .busta-aggiungi::before { display: none; }
-        .busta-aggiungi i { color: var(--grigio-luce); margin-bottom: 15px; }
+        .busta-aggiungi i { 
+            color: var(--grigio-luce); 
+            margin-bottom: 15px;
+            background: none !important;
+            -webkit-text-fill-color: initial !important;
+        }
+        .busta-aggiungi h3 { color: var(--grigio-luce); }
         .busta-aggiungi:hover {
             border-color: var(--azzurro);
             background-color: rgba(0, 119, 200, 0.04);
         }
-        .busta-aggiungi:hover i, .busta-aggiungi:hover h3 { color: var(--azzurro); }
+        .busta-aggiungi:hover i { transform: scale(1.1); color: var(--azzurro); }
+        .busta-aggiungi:hover h3 { color: var(--azzurro); }
 
         /* --- SCHERMATA 2: DETTAGLIO SEZIONE --- */
         .view-sezione { display: none; }
@@ -188,9 +217,10 @@
             text-decoration: none;
             color: var(--grigio-luce);
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             cursor: pointer;
             font-size: 0.95rem;
+            transition: color 0.2s;
         }
         .btn-indietro:hover { color: var(--blu-navy); }
 
@@ -199,55 +229,56 @@
             justify-content: space-between;
             align-items: center;
             background-color: var(--bianco);
-            padding: 20px 25px;
-            border-radius: 12px;
+            padding: 22px 28px;
+            border-radius: 16px;
             border-left: 5px solid var(--azzurro);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(27, 54, 93, 0.03);
+            margin-bottom: 30px;
         }
 
-        .header-sezione h2 { color: var(--blu-navy); font-size: 1.6rem; }
+        .header-sezione h2 { color: var(--blu-navy); font-size: 1.6rem; font-weight: 700; }
         
         .btn-azione-principale {
             background-color: var(--azzurro);
             color: var(--bianco);
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 12px 22px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
             font-size: 0.95rem;
+            transition: background-color 0.2s;
         }
         .btn-azione-principale:hover { background-color: var(--blu-navy); }
 
         .tabella-wrapper {
             background-color: var(--bianco);
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            box-shadow: 0 6px 20px rgba(27, 54, 93, 0.03);
+            border: 1px solid rgba(27, 54, 93, 0.02);
         }
 
         .tabella-documenti { width: 100%; border-collapse: collapse; }
 
         .tabella-documenti th, .tabella-documenti td {
-            padding: 16px 20px; text-align: left; border-bottom: 1px solid #E2E8F0;
+            padding: 18px 24px; text-align: left; border-bottom: 1px solid #E2E8F0;
         }
 
         .tabella-documenti th {
-            background-color: #EDF2F7; color: var(--grigio-testo); font-weight: 600; text-transform: uppercase; font-size: 0.8rem;
+            background-color: #F7FAFC; color: var(--grigio-testo); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;
         }
 
-        /* Stile per riga storicizzata */
         .riga-archiviato {
-            background-color: #F7FAFC;
-            opacity: 0.65;
+            background-color: #F8FAFC;
+            opacity: 0.6;
         }
 
         .status {
-            display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;
         }
         .status-ok { background-color: #C6F6D5; color: var(--verde-ok); }
         .status-alert { background-color: #FEFCBF; color: #744210; }
@@ -256,13 +287,13 @@
         .status-archiviato { background-color: #E2E8F0; color: #4A5568; }
 
         .azioni button {
-            background: none; border: none; color: var(--grigio-luce); cursor: pointer; font-size: 1.1rem; margin-right: 12px; padding: 5px;
+            background: none; border: none; color: var(--grigio-luce); cursor: pointer; font-size: 1.1rem; margin-right: 14px; padding: 6px; transition: color 0.2s;
         }
         .azioni button:hover { color: var(--azzurro); }
         .azioni button.btn-rinnova:hover { color: var(--giallo-alert); }
         .azioni button.btn-elimina:hover { color: var(--rosso-allerta); }
 
-        .tabella-vuota { padding: 40px; text-align: center; color: var(--grigio-luce); font-style: italic; }
+        .tabella-vuota { padding: 50px; text-align: center; color: var(--grigio-luce); font-style: italic; }
 
         /* --- MODALI --- */
         .modal-overlay {
@@ -270,32 +301,34 @@
             display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 1000; padding: 15px;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-box { background-color: var(--bianco); padding: 25px; border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); transform: translateY(-15px); transition: transform 0.25s ease; }
+        .modal-box { background-color: var(--bianco); padding: 30px; border-radius: 20px; width: 100%; max-width: 490px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); transform: translateY(-20px); transition: transform 0.25s ease; }
         .modal-overlay.active .modal-box { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--sfondo); padding-bottom: 12px; }
-        .modal-header h2 { color: var(--blu-navy); font-size: 1.3rem; }
-        .btn-chiudi-modal { background: none; border: none; font-size: 1.4rem; color: var(--grigio-luce); cursor: pointer; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 6px; color: var(--blu-navy); font-weight: 600; font-size: 0.9rem; }
-        .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 11px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 0.95rem; outline: none; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--sfondo); padding-bottom: 14px; }
+        .modal-header h2 { color: var(--blu-navy); font-size: 1.4rem; font-weight: 700; }
+        .btn-chiudi-modal { background: none; border: none; font-size: 1.6rem; color: var(--grigio-luce); cursor: pointer; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--blu-navy); font-weight: 600; font-size: 0.9rem; }
+        .form-group input[type="text"], .form-group input[type="date"], .form-group select { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
         .form-group input:focus, .form-group select:focus { border-color: var(--azzurro); }
 
-        .file-upload-wrapper { position: relative; border: 2px dashed var(--grigio-luce); border-radius: 8px; padding: 22px; text-align: center; background-color: var(--sfondo); cursor: pointer; }
-        .file-upload-wrapper i { font-size: 1.8rem; color: var(--azzurro); margin-bottom: 8px; }
+        .file-upload-wrapper { position: relative; border: 2px dashed var(--grigio-luce); border-radius: 10px; padding: 26px; text-align: center; background-color: var(--sfondo); cursor: pointer; transition: border-color 0.2s; }
+        .file-upload-wrapper:hover { border-color: var(--azzurro); }
+        .file-upload-wrapper i { font-size: 2rem; color: var(--azzurro); margin-bottom: 10px; }
         .file-upload-wrapper p { font-size: 0.85rem; color: var(--blu-navy); font-weight: 500; }
         .file-upload-wrapper input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .nome-file-selezionato { margin-top: 6px; font-size: 0.85rem; color: var(--verde-ok); font-weight: bold; word-break: break-all; }
-        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
-        .btn-annulla { background-color: transparent; border: 2px solid var(--grigio-luce); color: var(--grigio-luce); padding: 9px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-salva { background-color: var(--verde-ok); color: var(--bianco); border: none; padding: 9px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .nome-file-selezionato { margin-top: 8px; font-size: 0.85rem; color: var(--verde-ok); font-weight: bold; word-break: break-all; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
+        .btn-annulla { background-color: transparent; border: 2px solid var(--grigio-luce); color: var(--grigio-luce); padding: 10px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-salva { background-color: var(--verde-ok); color: var(--bianco); border: none; padding: 10px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
         @media(max-width: 650px) {
-            body { padding: 15px 10px; }
-            .header h1 { font-size: 1.8rem; }
-            .header-sezione { flex-direction: column; gap: 12px; align-items: flex-start; padding: 15px; }
+            body { padding: 20px 10px; }
+            .header h1 { font-size: 1.9rem; }
+            .header-sezione { flex-direction: column; gap: 14px; align-items: flex-start; padding: 18px; }
             .btn-azione-principale { width: 100%; justify-content: center; }
             .tabella-documenti th:nth-child(3), .tabella-documenti td:nth-child(3) { display: none; }
-            .tabella-documenti th, .tabella-documenti td { padding: 12px 10px; font-size: 0.9rem; }
+            .tabella-documenti th, .tabella-documenti td { padding: 14px 12px; font-size: 0.9rem; }
+            .archivio-grid { gap: 30px; }
         }
     </style>
 </head>
@@ -309,8 +342,8 @@
 
         <div id="view-archivio">
             <div class="archivio-grid" id="griglia-sezioni">
-                <div style="padding: 20px; text-align: center; color: var(--grigio-luce); width: 100%;">
-                    <i class="fa-solid fa-spinner fa-spin"></i> Connessione al database di Marina Porto Antico...
+                <div style="padding: 30px; text-align: center; color: var(--grigio-luce); width: 100%; font-weight: 600;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Sincronizzazione sicura con il cloud di Marina Porto Antico...
                 </div>
             </div>
         </div>
@@ -332,7 +365,7 @@
                             <th>Nome Documento</th>
                             <th>Scadenza / Stato</th>
                             <th>Stato</th>
-                            <th style="width: 130px; text-align: center;">Azioni</th>
+                            <th style="width: 140px; text-align: center;">Azioni</th>
                         </tr>
                     </thead>
                     <tbody id="lista-documenti"></tbody>
@@ -422,7 +455,7 @@
         let sezioni = [];
         let documentoList = [];
         let currentSezioneId = null;
-        let idDocumentoDaRinnovare = null; // Memorizza se stiamo sostituendo un vecchio documento
+        let idDocumentoDaRinnovare = null;
 
         window.onload = function() {
             caricaDatiDalCloud();
@@ -430,12 +463,10 @@
 
         async function caricaDatiDalCloud() {
             try {
-                // Lettura Sezioni
                 let { data: dataSez, error: errSez } = await supabaseClient.from('sezioni').select('*').order('nome');
                 if (errSez) throw errSez;
                 sezioni = dataSez || [];
 
-                // Lettura Documenti
                 let { data: dataDoc, error: errDoc } = await supabaseClient.from('documenti').select('*');
                 if (errDoc) throw errDoc;
                 documentoList = dataDoc || [];
@@ -471,14 +502,12 @@
             griglia.innerHTML = '';
 
             sezioni.forEach(sez => {
-                // Filtriamo solo i documenti ATTIVI per il calcolo dei semafori
                 const docDellaSezione = documentoList.filter(d => d.sezione_id === sez.id);
                 const docAttivi = docDellaSezione.filter(d => !d.archiviato);
                 
                 const contaDoc = docDellaSezione.length;
                 const testoDoc = contaDoc === 1 ? '1 Documento' : `${contaDoc} Documenti`;
 
-                // --- CALCOLO LOGICA SEMAFORO (Solo su documenti NON archiviati) ---
                 let coloreSemaforo = 'sem-verde';
                 let testoSemaforo = 'In Regola';
                 let iconaSemaforo = 'fa-circle-check';
@@ -555,7 +584,6 @@
             }
             msgVuoto.style.display = 'none';
 
-            // ORDINAMENTO INTELLIGENTE: Prima gli attivi (scadenza vicina), poi gli archiviati in fondo
             docFiltrati.sort((a, b) => {
                 if (a.archiviato !== b.archiviato) return a.archiviato ? 1 : -1;
                 return new Date(a.data_scadenza) - new Date(b.data_scadenza);
@@ -587,7 +615,6 @@
                         badgeStato = `<span class="status status-ok"><i class="fa-solid fa-circle-check"></i> Valido</span>`;
                     }
                     
-                    // Se attivo, aggiungiamo il tasto 🔄 per aggiornare/archiviare
                     bottoniAzione += `<button title="Aggiorna / Rinnova" class="btn-rinnova" onclick="apriModalDocumento('${doc.id}')"><i class="fa-solid fa-rotate"></i></button>`;
                     bottoniAzione += `<button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash"></i></button>`;
                 }
@@ -613,6 +640,10 @@
             document.getElementById('form-nuova-sezione').reset();
         }
 
+        document.getElementById('form-nuovo-documento').addEventListener('submit', function(e) {
+            if(e.submitter) e.submitter.disabled = true;
+        });
+
         function apriModalDocumento(idDocDaRinnovare = null) {
             idDocumentoDaRinnovare = idDocDaRinnovare;
             const titolo = document.getElementById('titolo-modal-documento');
@@ -621,7 +652,7 @@
             if (idDocumentoDaRinnovare) {
                 titolo.innerHTML = `<i class="fa-solid fa-rotate"></i> Rinnova e Archivia Vecchio Certificato`;
                 const vecchioDoc = documentoList.find(d => d.id === idDocumentoDaRinnovare);
-                if (vecchioDoc) inputNome.value = vecchioDoc.nome; // Pre-compila il nome per comodità
+                if (vecchioDoc) inputNome.value = vecchioDoc.nome;
             } else {
                 titolo.innerHTML = `<i class="fa-solid fa-file-circle-plus"></i> Archivia Documento Nuovo`;
             }
@@ -673,11 +704,9 @@
             const estensione = file.name.split('.').pop();
             const percorsoFile = `${currentSezioneId}/${Date.now()}.${estensione}`;
 
-            // 1. Carichiamo il file fisicamente nello storage cloud
             const { error: errUpload } = await supabaseClient.storage.from('file_documenti').upload(percorsoFile, file);
             if (errUpload) { alert("Errore Cloud Storage: " + errUpload.message); return; }
 
-            // 2. Se è un RINNOVO, aggiorniamo il vecchio documento impostando archiviato = true
             if (idDocumentoDaRinnovare) {
                 const { error: errArchive } = await supabaseClient
                     .from('documenti')
@@ -690,7 +719,6 @@
                 }
             }
 
-            // 3. Inseriamo il nuovo record attivo
             const { error: errInsert } = await supabaseClient.from('documenti').insert([{
                 sezione_id: currentSezioneId,
                 nome: nome,
