@@ -9,7 +9,7 @@
 
     <script>
         window.onerror = function(msg, url, line) {
-            alert("🚨 ERRORE DI SINTASSI RILEVATO!\n\nMessaggio: " + msg + "\nAlla riga del file: " + line);
+            alert("🚨 ERRORE DI SINTASSI RILEVATO!\n\nMessaggio: " + msg + "\nAlla riga: " + line);
             return false;
         };
     </script>
@@ -23,443 +23,178 @@
             --bianco: #FFFFFF;
             --grigio-testo: #4A5568;
             --grigio-luce: #718096;
-            --verde-ok: #38A169;
-            --giallo-alert: #D69E2E;
-            --rosso-allerta: #E53E3E;
-            --nero-scaduto: #1A202C;
             --overlay: rgba(27, 54, 93, 0.6);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--sfondo);
-            color: #333;
-            padding: 40px 15px;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .container {
-            max-width: 1140px;
-            margin: 0 auto;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--sfondo); color: #333; padding: 40px 15px; -webkit-tap-highlight-color: transparent; }
+        .container { max-width: 1140px; margin: 0 auto; }
 
         /* --- SCHERMATA LOGIN --- */
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 70vh;
-        }
-
-        .login-box {
-            background-color: var(--bianco);
-            padding: 40px 30px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 15px 35px rgba(27, 54, 93, 0.08);
-            border: 1px solid rgba(27, 54, 93, 0.04);
-            text-align: center;
-        }
-
-        .login-box i.logo-login {
-            font-size: 3.5rem;
-            color: var(--azzurro);
-            margin-bottom: 15px;
-        }
-
-        .login-box h2 {
-            color: var(--blu-navy);
-            margin-bottom: 8px;
-            font-size: 1.6rem;
-            font-weight: 700;
-        }
-
-        .login-box p {
-            color: var(--grigio-luce);
-            font-size: 0.9rem;
-            margin-bottom: 30px;
-        }
-
-        .login-box .form-group {
-            text-align: left;
-        }
-
-        .btn-login {
-            width: 100%;
-            background-color: var(--blu-navy);
-            color: var(--bianco);
-            border: none;
-            padding: 13px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 10px;
-        }
-
-        .btn-login:hover {
-            background-color: var(--azzurro);
-        }
+        .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
+        .login-box { background-color: var(--bianco); padding: 40px 30px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(27, 54, 93, 0.08); border: 1px solid rgba(27, 54, 93, 0.04); text-align: center; }
+        .login-box i.logo-login { font-size: 3.5rem; color: var(--azzurro); margin-bottom: 15px; }
+        .login-box h2 { color: var(--blu-navy); margin-bottom: 8px; font-size: 1.6rem; font-weight: 700; }
+        .login-box p { color: var(--grigio-luce); font-size: 0.9rem; margin-bottom: 30px; }
+        .login-box .form-group { text-align: left; }
+        .btn-login { width: 100%; background-color: var(--blu-navy); color: var(--bianco); border: none; padding: 13px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background-color 0.2s; margin-top: 10px; }
+        .btn-login:hover { background-color: var(--azzurro); }
 
         /* --- INTESTAZIONE --- */
-        .header {
-            text-align: center;
-            margin-bottom: 35px;
-            position: relative;
-        }
+        .header { text-align: center; margin-bottom: 35px; position: relative; }
+        .header h1 { color: var(--blu-navy); font-size: 2.4rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 14px; font-weight: 700; }
+        .header p { color: var(--grigio-luce); font-size: 1.1rem; letter-spacing: 0.3px; }
+        
+        .btn-logout { position: absolute; top: 0; right: 0; background-color: #FFF5F5; color: #E53E3E; border: 1px solid #FED7D7; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: none; transition: all 0.2s; }
+        .btn-logout:hover { background-color: #E53E3E; color: var(--bianco); }
 
-        .header h1 {
-            color: var(--blu-navy);
-            font-size: 2.4rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            font-weight: 700;
-        }
+        .btn-admin { position: absolute; top: 0; right: 90px; background-color: #EBF8FF; color: #2B6CB0; border: 1px solid #BEE3F8; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: none; transition: all 0.2s; }
+        .btn-admin:hover { background-color: #2B6CB0; color: var(--bianco); }
 
-        .header p {
-            color: var(--grigio-luce);
-            font-size: 1.1rem;
-            letter-spacing: 0.3px;
-        }
+        /* --- SELETTORE VISTE --- */
+        .nav-viste { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .tab-button { background-color: #E2E8F0; color: var(--grigio-testo); border: none; padding: 12px 24px; border-radius: 12px; font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: all 0.25s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .tab-button:hover { background-color: #CBD5E0; color: var(--blu-navy); }
+        .tab-button.attivo { background-color: var(--azzurro); color: var(--bianco); box-shadow: 0 4px 12px rgba(0, 119, 200, 0.2); }
+        .tab-button.attivo.tab-privato { background-color: var(--blu-navy); box-shadow: 0 4px 12px rgba(27, 54, 93, 0.2); }
 
-        .btn-logout {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: #FFF5F5;
-            color: var(--rosso-allerta);
-            border: 1px solid #FED7D7;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: none;
-            transition: all 0.2s;
-        }
-        .btn-logout:hover {
-            background-color: var(--rosso-allerta);
-            color: var(--bianco);
-        }
+        /* --- BARRA DI RICERCA --- */
+        .search-bar-container { position: relative; max-width: 600px; margin: 0 auto 40px auto; }
+        .search-bar-container i.fa-search { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--grigio-luce); font-size: 1.1rem; }
+        .search-bar-container input { width: 100%; padding: 14px 45px 14px 45px; border-radius: 30px; border: 2px solid #E2E8F0; font-size: 1rem; outline: none; transition: all 0.2s; box-shadow: 0 4px 15px rgba(27, 54, 93, 0.03); color: var(--blu-navy); font-weight: 500; }
+        .search-bar-container input:focus { border-color: var(--azzurro); box-shadow: 0 4px 20px rgba(0, 119, 200, 0.1); }
+        .search-bar-container input::placeholder { font-weight: normal; color: #A0AEC0; }
+        .btn-clear-search { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--grigio-luce); font-size: 1.2rem; cursor: pointer; padding: 5px; }
+        .btn-clear-search:hover { color: var(--rosso-allerta); }
 
-        /* --- SELETTORE VISTE (TAB NAVIGATION) --- */
-        .nav-viste {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-        }
+        .app-content { display: none; }
 
-        .tab-button {
-            background-color: #E2E8F0;
-            color: var(--grigio-testo);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tab-button:hover {
-            background-color: #CBD5E0;
-            color: var(--blu-navy);
-        }
-
-        .tab-button.attivo {
-            background-color: var(--azzurro);
-            color: var(--bianco);
-            box-shadow: 0 4px 12px rgba(0, 119, 200, 0.2);
-        }
-
-        .tab-button.attivo.tab-privato {
-            background-color: var(--blu-navy);
-            box-shadow: 0 4px 12px rgba(27, 54, 93, 0.2);
-        }
-
-        /* --- INTERFACCIA APPLICAZIONE (NASCONDI DI DEFAULT) --- */
-        .app-content {
-            display: none;
-        }
-
-        /* --- SCHERMATA 1: INTERFACCIA ARCHIVIO (GRIGLIA PRESTIGIO) --- */
-        .archivio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-            gap: 40px;
-            margin-top: 20px;
-        }
-
-        .busta {
-            background-color: var(--bianco);
-            border-radius: 0 16px 16px 16px;
-            padding: 40px 24px 24px 24px;
-            position: relative;
-            box-shadow: 0 12px 30px rgba(27, 54, 93, 0.05);
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            border: 1px solid rgba(27, 54, 93, 0.04);
-        }
-
-        .busta::before {
-            content: '';
-            position: absolute;
-            top: -16px;
-            left: -1px;
-            width: 105px;
-            height: 16px;
-            background-color: var(--azzurro);
-            border-radius: 8px 8px 0 0;
-            transition: background-color 0.3s ease;
-        }
-
-        .busta:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 22px 40px rgba(27, 54, 93, 0.12);
-            border-color: rgba(0, 119, 200, 0.3);
-        }
-
+        /* --- GRIGLIA CARTELLE --- */
+        .archivio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 40px; }
+        .busta { background-color: var(--bianco); border-radius: 0 16px 16px 16px; padding: 40px 24px 24px 24px; position: relative; box-shadow: 0 12px 30px rgba(27, 54, 93, 0.05); transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; border: 1px solid rgba(27, 54, 93, 0.04); }
+        .busta::before { content: ''; position: absolute; top: -16px; left: -1px; width: 105px; height: 16px; background-color: var(--azzurro); border-radius: 8px 8px 0 0; transition: background-color 0.3s ease; }
+        .busta:hover { transform: translateY(-6px); box-shadow: 0 22px 40px rgba(27, 54, 93, 0.12); border-color: rgba(0, 119, 200, 0.3); }
         .busta:hover::before { background-color: var(--blu-navy); }
-
         .busta.busta-privata::before { background-color: #4A5568; }
         .busta.busta-privata:hover::before { background-color: var(--blu-navy); }
+        
+        .busta.busta-archivio-sistema { background-color: #E2E8F0; border: 1px solid #CBD5E0; }
+        .busta.busta-archivio-sistema::before { background-color: #718096; }
+        .busta.busta-archivio-sistema i.icona-cartella { background: linear-gradient(135deg, #4A5568, #718096); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .busta.busta-archivio-sistema:hover::before { background-color: #4A5568; }
 
-        .busta i.icona-cartella {
-            font-size: 3.6rem;
-            background: linear-gradient(135deg, var(--blu-navy), var(--azzurro));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 18px;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
+        .busta i.icona-cartella { font-size: 3.6rem; background: linear-gradient(135deg, var(--blu-navy), var(--azzurro)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 18px; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .busta:hover i.icona-cartella { transform: scale(1.12) rotate(3deg); }
-
-        .busta h3 {
-            font-size: 1.2rem;
-            color: var(--blu-navy);
-            margin-bottom: 10px;
-            font-weight: 600;
-            word-break: break-word;
-        }
-
-        .badge-documenti {
-            background-color: #EDF2F7;
-            color: var(--blu-navy);
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            letter-spacing: 0.3px;
-        }
-
-        .semaforo-busta {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 8px 16px;
-            border-radius: 30px;
-            width: 100%;
-            justify-content: center;
-            margin-top: auto;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .sem-verde { background-color: #E6FFFA; color: var(--verde-ok); border: 1px solid #B2F5EA; }
-        .sem-giallo { background-color: #FFFDF5; color: #B7791F; border: 1px solid #FEEBC8; }
-        .sem-rosso { background-color: #FFF5F5; color: var(--rosso-allerta); border: 1px solid #FED7D7; }
-        .sem-nero { background-color: #1A202C; color: #FFFFFF; }
-
-        .btn-elimina-sezione {
-            position: absolute;
-            top: 12px;
-            right: 14px;
-            background: none;
-            border: none;
-            color: #E2E8F0;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: color 0.2s;
-            padding: 5px;
-            z-index: 10;
-        }
-
-        .busta:hover .btn-elimina-sezione { color: var(--rosso-allerta); }
-
-        .busta-aggiungi {
-            background-color: rgba(27, 54, 93, 0.02);
-            border: 2px dashed #CBD5E0;
-            box-shadow: none;
-            justify-content: center;
-        }
+        .busta h3 { font-size: 1.2rem; color: var(--blu-navy); margin-bottom: 10px; font-weight: 600; word-break: break-word; }
+        .badge-documenti { background-color: #EDF2F7; color: var(--blu-navy); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; margin-bottom: 16px; }
+        .semaforo-busta { display: inline-flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 700; padding: 8px 16px; border-radius: 30px; width: 100%; justify-content: center; margin-top: auto; letter-spacing: 0.3px; }
+        .btn-elimina-sezione { position: absolute; top: 12px; right: 14px; background: none; border: none; color: #E2E8F0; font-size: 1rem; cursor: pointer; transition: color 0.2s; padding: 5px; z-index: 10; }
+        .busta:hover .btn-elimina-sezione { color: #E53E3E; }
+        
+        .busta-aggiungi { background-color: rgba(27, 54, 93, 0.02); border: 2px dashed #CBD5E0; box-shadow: none; justify-content: center; }
         .busta-aggiungi::before { display: none; }
-        .busta-aggiungi i { 
-            color: var(--grigio-luce); 
-            margin-bottom: 15px;
-            background: none !important;
-            -webkit-text-fill-color: initial !important;
-        }
+        .busta-aggiungi i { color: var(--grigio-luce); margin-bottom: 15px; background: none !important; -webkit-text-fill-color: initial !important; }
         .busta-aggiungi h3 { color: var(--grigio-luce); }
-        .busta-aggiungi:hover {
-            border-color: var(--azzurro);
-            background-color: rgba(0, 119, 200, 0.04);
-        }
+        .busta-aggiungi:hover { border-color: var(--azzurro); background-color: rgba(0, 119, 200, 0.04); }
         .busta-aggiungi:hover i { transform: scale(1.1); color: var(--azzurro); }
         .busta-aggiungi:hover h3 { color: var(--azzurro); }
 
-        /* --- SCHERMATA 2: DETTAGLIO SEZIONE --- */
+        /* --- VISTE INTERNE --- */
         .view-sezione { display: none; }
-
-        .btn-indietro {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: var(--grigio-luce);
-            font-weight: bold;
-            margin-bottom: 25px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
+        .btn-indietro { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--grigio-luce); font-weight: bold; margin-bottom: 25px; cursor: pointer; font-size: 0.95rem; transition: color 0.2s; }
         .btn-indietro:hover { color: var(--blu-navy); }
-
-        .header-sezione {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--bianco);
-            padding: 22px 28px;
-            border-radius: 16px;
-            border-left: 5px solid var(--azzurro);
-            box-shadow: 0 4px 20px rgba(27, 54, 93, 0.03);
-            margin-bottom: 30px;
-        }
-
+        .header-sezione { display: flex; justify-content: space-between; align-items: center; background-color: var(--bianco); padding: 22px 28px; border-radius: 16px; border-left: 5px solid var(--azzurro); box-shadow: 0 4px 20px rgba(27, 54, 93, 0.03); margin-bottom: 25px; }
         .header-sezione h2 { color: var(--blu-navy); font-size: 1.6rem; font-weight: 700; }
-        
-        .btn-azione-principale {
-            background-color: var(--azzurro);
-            color: var(--bianco);
-            border: none;
-            padding: 12px 22px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            transition: background-color 0.2s;
-        }
+        .btn-azione-principale { background-color: var(--azzurro); color: var(--bianco); border: none; padding: 12px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; transition: background-color 0.2s; }
         .btn-azione-principale:hover { background-color: var(--blu-navy); }
 
-        .tabella-wrapper {
-            background-color: var(--bianco);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(27, 54, 93, 0.03);
-            border: 1px solid rgba(27, 54, 93, 0.02);
-        }
+        /* TABELLE */
+        .tabella-wrapper { background-color: transparent; box-shadow: none; border: none; overflow: visible; }
+        .tabella-documenti { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        .tabella-documenti th { padding: 10px 24px; color: var(--grigio-luce); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.8px; border: none; text-align: left; }
+        
+        .tabella-documenti tbody tr { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .tabella-documenti td { padding: 14px 24px; font-size: 0.95rem; vertical-align: middle; border: none; }
+        .tabella-documenti td:first-child { border-radius: 12px 0 0 12px; }
+        .tabella-documenti td:last-child { border-radius: 0 12px 12px 0; }
+        .tabella-documenti tbody tr:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(27, 54, 93, 0.1); }
 
-        .tabella-documenti { width: 100%; border-collapse: collapse; }
+        /* --- 🎨 COLORI DI SFONDO RIGHE --- */
+        .row-sfumato-verde td { background-color: #F0FDF4 !important; color: #276749; }
+        .row-sfumato-allerta td { background-color: #FFEDD5 !important; color: #9A3412; }
+        .row-sfumato-scaduto td { background-color: #9B2C2C !important; color: #FFFFFF !important; }
+        .row-sfumato-archiviato td { background-color: #F8FAFC !important; color: #4A5568; }
 
-        .tabella-documenti th, .tabella-documenti td {
-            padding: 18px 24px; text-align: left; border-bottom: 1px solid #E2E8F0;
-        }
+        /* --- 📝 TIPOGRAFIA DI STATO CON NO-WRAP --- */
+        .status-testo { display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .testo-verde { color: #276749; }
+        .testo-allerta { color: #9A3412; }
+        .testo-scaduto { color: #FFFFFF; }
+        .testo-archiviato { color: #718096; }
 
-        .tabella-documenti th {
-            background-color: #F7FAFC; color: var(--grigio-testo); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px;
-        }
+        /* --- 🌟 PULSANTI AZIONE UNIFORMI --- */
+        .btn-azione-riga { height: 38px; border: none; padding: 0 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; margin-left: 6px; }
+        
+        .btn-azione-apri { background-color: #EBF8FF; color: #2B6CB0; }
+        .btn-azione-apri:hover { background-color: #2B6CB0; color: #FFFFFF; transform: scale(1.03); }
+        
+        .btn-azione-rinnova { background-color: #E6FFFA; color: #2F855A; }
+        .btn-azione-rinnova:hover { background-color: #2F855A; color: #FFFFFF; transform: scale(1.03); }
+        
+        .btn-azione-archivia { background-color: #EDF2F7; color: #4A5568; }
+        .btn-azione-archivia:hover { background-color: #718096; color: #FFFFFF; transform: scale(1.03); }
 
-        .riga-archiviato {
-            background-color: #F8FAFC;
-            opacity: 0.6;
-        }
+        .btn-azione-ripristina { background-color: #E2E8F0; color: #4A5568; }
+        .btn-azione-ripristina:hover { background-color: #4A5568; color: #FFFFFF; transform: scale(1.03); }
 
-        .status {
-            display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;
-        }
-        .status-ok { background-color: #C6F6D5; color: var(--verde-ok); }
-        .status-alert { background-color: #FEFCBF; color: #744210; }
-        .status-rosso { background-color: #FED7D7; color: var(--rosso-allerta); }
-        .status-nero { background-color: #2D3748; color: #FFFFFF; }
-        .status-archiviato { background-color: #E2E8F0; color: #4A5568; }
+        .btn-azione-rimuovi { background-color: #FED7D7; color: #C53030; }
+        .btn-azione-rimuovi:hover { background-color: #C53030; color: #FFFFFF; transform: scale(1.03); }
 
-        .azioni button {
-            background: none; border: none; color: var(--grigio-luce); cursor: pointer; font-size: 1.1rem; margin-right: 14px; padding: 6px; transition: color 0.2s;
-        }
-        .azioni button:hover { color: var(--azzurro); }
-        .azioni button.btn-rinnova:hover { color: var(--giallo-alert); }
-        .azioni button.btn-elimina:hover { color: var(--rosso-allerta); }
+        .btn-azione-nulla { background-color: transparent; color: #A0AEC0; cursor: not-allowed; border: 1px dashed #CBD5E0; }
+
+        .row-sfumato-scaduto .btn-azione-riga:not(.btn-azione-nulla) { background-color: rgba(255, 255, 255, 0.15); color: #FFFFFF; }
+        .row-sfumato-scaduto .btn-azione-riga:not(.btn-azione-nulla):hover { background-color: rgba(255, 255, 255, 0.35); transform: scale(1.03); }
+        .row-sfumato-scaduto .btn-azione-nulla { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.5); }
 
         .tabella-vuota { padding: 50px; text-align: center; color: var(--grigio-luce); font-style: italic; }
 
-        /* --- MODALI & INPUT --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay);
-            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 1000; padding: 15px;
-        }
+        /* --- MODALI --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 1000; padding: 15px; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-box { background-color: var(--bianco); padding: 30px; border-radius: 20px; width: 100%; max-width: 490px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); transform: translateY(-20px); transition: transform 0.25s ease; }
         .modal-overlay.active .modal-box { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--sfondo); padding-bottom: 14px; }
         .modal-header h2 { color: var(--blu-navy); font-size: 1.4rem; font-weight: 700; }
         .btn-chiudi-modal { background: none; border: none; font-size: 1.6rem; color: var(--grigio-luce); cursor: pointer; }
-        
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: var(--blu-navy); font-weight: 600; font-size: 0.9rem; }
-        
-        .form-group input[type="text"], 
-        .form-group input[type="password"], 
-        .form-group input[type="date"], 
-        .form-group select { 
-            width: 100%; 
-            padding: 12px; 
-            border: 2px solid #E2E8F0; 
-            border-radius: 10px; 
-            font-size: 0.95rem; 
-            outline: none; 
-            transition: border-color 0.2s; 
-        }
+        .form-group input[type="text"], .form-group input[type="password"], .form-group input[type="date"], .form-group select { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
         .form-group input:focus, .form-group select:focus { border-color: var(--azzurro); }
+        
+        .chk-permesso-riga { margin-bottom:12px; display:flex; align-items:center; gap:10px; background-color:#F8FAFC; padding:10px 15px; border-radius:8px; border:1px solid #E2E8F0; }
+        .chk-permesso-riga input { width:auto; transform:scale(1.2); cursor:pointer; }
+        .chk-permesso-riga label { margin:0; cursor:pointer; font-weight:600; color:var(--blu-navy); flex-grow: 1; }
 
         .file-upload-wrapper { position: relative; border: 2px dashed var(--grigio-luce); border-radius: 10px; padding: 26px; text-align: center; background-color: var(--sfondo); cursor: pointer; transition: border-color 0.2s; }
         .file-upload-wrapper:hover { border-color: var(--azzurro); }
         .file-upload-wrapper i { font-size: 2rem; color: var(--azzurro); margin-bottom: 10px; }
         .file-upload-wrapper p { font-size: 0.85rem; color: var(--blu-navy); font-weight: 500; }
         .file-upload-wrapper input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .nome-file-selezionato { margin-top: 8px; font-size: 0.85rem; color: var(--verde-ok); font-weight: bold; word-break: break-all; }
+        .nome-file-selezionato { margin-top: 8px; font-size: 0.85rem; color: #38A169; font-weight: bold; word-break: break-all; }
         .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
         .btn-annulla { background-color: transparent; border: 2px solid var(--grigio-luce); color: var(--grigio-luce); padding: 10px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .btn-salva { background-color: var(--verde-ok); color: var(--bianco); border: none; padding: 10px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-salva { background-color: #38A169; color: var(--bianco); border: none; padding: 10px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
         @media(max-width: 650px) {
-            body { padding: 20px 10px; }
             .header h1 { font-size: 1.9rem; }
             .header-sezione { flex-direction: column; gap: 14px; align-items: flex-start; padding: 18px; }
             .btn-azione-principale { width: 100%; justify-content: center; }
             .tabella-documenti th:nth-child(3), .tabella-documenti td:nth-child(3) { display: none; }
-            .tabella-documenti th, .tabella-documenti td { padding: 14px 12px; font-size: 0.9rem; }
+            .tabella-documenti th, .tabella-documenti td { padding: 10px 12px; font-size: 0.9rem; }
             .archivio-grid { gap: 30px; }
+            .btn-azione-riga { width: 100%; justify-content: center; margin-left: 0; margin-top: 5px; }
+            .btn-admin { right: 10px; top: 40px; }
         }
     </style>
 </head>
@@ -467,6 +202,7 @@
 
     <div class="container">
         <div class="header">
+            <button class="btn-admin" id="botton-admin" onclick="apriGestioneUtenti()"><i class="fa-solid fa-users-gear"></i> Permessi</button>
             <button class="btn-logout" id="botton-logout" onclick="eseguiLogout()"><i class="fa-solid fa-right-from-bracket"></i> Esci</button>
             <h1><i class="fa-solid fa-anchor"></i> Marina Porto Antico</h1>
             <p>Scadenziario Ufficiale Documenti & Certificazioni</p>
@@ -495,11 +231,17 @@
             
             <div class="nav-viste" id="navigazione-viste">
                 <button class="tab-button attivo" id="btn-vista-porto" onclick="cambiaVista('porto')">
-                    <i class="fa-solid fa-ship"></i> Vista Porto (Condivisa)
+                    <i class="fa-solid fa-ship"></i> Vista condivisa
                 </button>
                 <button class="tab-button tab-privato" id="btn-vista-personale" onclick="cambiaVista('personale')">
-                    <i class="fa-solid fa-lock"></i> Vista Personale (Riservata)
+                    <i class="fa-solid fa-lock"></i> Vista Personale
                 </button>
+            </div>
+
+            <div class="search-bar-container">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="input-ricerca" placeholder="Cerca un file o una scadenza per nome..." onkeyup="gestisciRicerca()">
+                <button class="btn-clear-search" onclick="pulisciRicerca(true)" id="btn-clear-search" style="display:none;"><i class="fa-solid fa-times"></i></button>
             </div>
 
             <div id="view-archivio">
@@ -510,26 +252,48 @@
                 <div onclick="mostraArchivio()" class="btn-indietro">
                     <i class="fa-solid fa-arrow-left"></i> Torna all'Archivio Principale
                 </div>
-                <div class="header-sezione">
+                <div class="header-sezione" id="header-dinamico-sezione">
                     <h2 id="titolo-sezione">Caricamento...</h2>
-                    <button class="btn-azione-principale" onclick="apriModalDocumento(null)">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Carica Documento Nuovo
+                    <button class="btn-azione-principale" id="btn-crea-scadenza-in-sezione" onclick="apriModalDocumento(null)">
+                        <i class="fa-solid fa-calendar-plus"></i> Imposta Nuova Scadenza
                     </button>
                 </div>
                 <div class="tabella-wrapper">
                     <table class="tabella-documenti">
                         <thead>
                             <tr>
-                                <th>Nome Documento</th>
-                                <th>Scadenza / Stato</th>
-                                <th>Stato</th>
-                                <th style="width: 140px; text-align: center;">Azioni</th>
+                                <th>Nome Scadenza / Documento</th>
+                                <th>Data Limite</th>
+                                <th>Stato Allerta</th>
+                                <th style="text-align: right; padding-right: 24px;">Azioni Gestionale</th>
                             </tr>
                         </thead>
                         <tbody id="lista-documenti"></tbody>
                     </table>
                     <div id="tabella-vuota-messaggio" class="tabella-vuota" style="display: none;">
-                        Nessun documento presente. Clicca su "Carica Documento" per iniziare.
+                        Nessun elemento attivo trovato.
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-ricerca" class="view-sezione" style="display: none;">
+                <div class="header-sezione" style="border-left-color: var(--blu-navy);">
+                    <h2><i class="fa-solid fa-search"></i> Risultati Ricerca</h2>
+                </div>
+                <div class="tabella-wrapper">
+                    <table class="tabella-documenti">
+                        <thead>
+                            <tr>
+                                <th>Nome Scadenza / Cartella</th>
+                                <th>Data Limite</th>
+                                <th>Stato Allerta</th>
+                                <th style="text-align: right; padding-right: 24px;">Azioni Gestionale</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-documenti-ricerca"></tbody>
+                    </table>
+                    <div id="ricerca-vuota-messaggio" class="tabella-vuota" style="display: none;">
+                        Nessun documento corrisponde alla tua ricerca.
                     </div>
                 </div>
             </div>
@@ -545,23 +309,12 @@
             </div>
             <form id="form-nuova-sezione" onsubmit="salvaNuovaSezione(event)">
                 <div class="form-group">
-                    <label for="input-nome-sezione">Nome della Categoria</label>
-                    <input type="text" id="input-nome-sezione" placeholder="es. Antincendio, Messa a terra" required>
-                </div>
-                <div class="form-group">
-                    <label for="input-icona-sezione">Tipologia Icona Grafica</label>
-                    <select id="input-icona-sezione">
-                        <option value="fa-fire-extinguisher">🧯 Antincendio / Sicurezza</option>
-                        <option value="fa-bolt">⚡ Impianti Elettrici</option>
-                        <option value="fa-file-signature">📜 Contratti / Demanio</option>
-                        <option value="fa-shield-halved">🛡️ Normative Lavoro</option>
-                        <option value="fa-file-invoice-dollar">💼 Assicurazioni Società</option>
-                        <option value="fa-wrench">🔧 Manutenzioni / Banchine</option>
-                    </select>
+                    <label for="input-nome-sezione">Nome della Cartella</label>
+                    <input type="text" id="input-nome-sezione" placeholder="es. Demanio, Sicurezza, Personale" required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-annulla" onclick="chiudiModalSezione()">Annulla</button>
-                    <button type="submit" class="btn-salva">Crea Busta</button>
+                    <button type="submit" class="btn-salva">Crea Cartella</button>
                 </div>
             </form>
         </div>
@@ -570,56 +323,86 @@
     <div class="modal-overlay" id="modal-documento">
         <div class="modal-box">
             <div class="modal-header">
-                <h2 id="titolo-modal-documento"><i class="fa-solid fa-file-circle-plus"></i> Archivia Documento</h2>
+                <h2 id="titolo-modal-documento"><i class="fa-solid fa-file-circle-plus"></i> Inserisci Scadenza</h2>
                 <button class="btn-chiudi-modal" onclick="chiudiModalDocumento()">&times;</button>
             </div>
             <form id="form-nuovo-documento" onsubmit="salvaNuovoDocumento(event)">
                 <div class="form-group">
-                    <label for="doc-nome">Nome Documento / Certificato</label>
-                    <input type="text" id="doc-nome" placeholder="es. Rinnovo CPI Molo 3" required>
+                    <label for="doc-nome">Nome Elemento / Certificato</label>
+                    <input type="text" id="doc-nome" placeholder="es. Documento" required>
                 </div>
                 <div class="form-group">
-                    <label for="doc-scadenza">Data di Scadenza Corrente</label>
+                    <label for="doc-scadenza">Data di Scadenza</label>
                     <input type="date" id="doc-scadenza" required>
                 </div>
                 <div class="form-group">
-                    <label>Scegli File PDF o Scatta Foto</label>
+                    <label for="doc-preavviso">Periodo di Preavviso (Attivazione Variazione Colore)</label>
+                    <select id="doc-preavviso">
+                        <option value="7_mesi">7 Mesi prima</option>
+                        <option value="4_mesi" selected>4 Mesi prima</option>
+                        <option value="1_mese">1 Mese prima</option>
+                        <option value="1_settimana">1 Settimana prima</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>File Associato o Foto (Opzionale)</label>
                     <div class="file-upload-wrapper">
                         <i class="fa-solid fa-camera-retro"></i>
-                        <p>Tocca per scattare una foto o selezionare un file</p>
-                        <input type="file" id="doc-file" accept=".pdf,image/*" onchange="aggiornaNomeFile(this)" required>
+                        <p>Tocca per scattare una foto o caricare un file (Lascia vuoto se non serve)</p>
+                        <input type="file" id="doc-file" accept=".pdf,image/*" onchange="aggiornaNomeFile(this)">
                     </div>
                     <div id="file-selezionato-feedback" class="nome-file-selezionato"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-annulla" onclick="chiudiModalDocumento()">Annulla</button>
-                    <button type="submit" class="btn-salva">Salva nel Cloud</button>
+                    <button type="submit" class="btn-salva">Salva nei Sistemi</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <div class="modal-overlay" id="modal-utenti">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-users-gear"></i> Permessi Operatori</h2>
+                <button class="btn-chiudi-modal" onclick="chiudiGestioneUtenti()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Seleziona l'Operatore (Dipendente)</label>
+                <select id="select-operatore" onchange="caricaPermessiOperatore(this.value)">
+                    <option value="">-- Scegli account --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Cartelle Condivise Visibili</label>
+                <div id="lista-checkbox-cartelle" style="max-height: 250px; overflow-y: auto;">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-annulla" onclick="chiudiGestioneUtenti()">Chiudi</button>
+                <button class="btn-salva" onclick="salvaPermessiOperatore()"><i class="fa-solid fa-floppy-disk"></i> Aggiorna</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- 1. CONFIGURAZIONE CHIAVI ACCOUNT ---
         const SUPABASE_URL = 'https://dytskuifwkgvdojnezoe.supabase.co'; 
         const SUPABASE_ANON_KEY = 'sb_publishable_eR-32KA6XBl87ejXvZepVw_WwICHNh1'; 
 
         let supabaseClient;
-        try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } catch(e) {
-            alert("Errore inizializzazione client: " + e.message);
-        }
+        try { supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } 
+        catch(e) { alert("Errore connessione: " + e.message); }
 
-        // --- STATO APPLICAZIONE ---
         let sezioni = [];
         let documentoList = [];
+        let tuttiIProfili = [];
+        let userPermissions = [];
         let currentSezioneId = null;
         let idDocumentoDaRinnovare = null;
         let vistaAttuale = 'porto'; 
         let currentUserId = null;
+        let currentUserRole = 'operatore';
 
-        // ASCOLTATORE DI STATO AUTOMATICO
         window.onload = function() {
             supabaseClient.auth.onAuthStateChange((event, session) => {
                 if (session) {
@@ -630,77 +413,187 @@
                     caricaDatiDalCloud();
                 } else {
                     currentUserId = null;
+                    currentUserRole = 'operatore';
                     document.getElementById('view-login').style.display = 'flex';
                     document.getElementById('contenuto-principale-app').style.display = 'none';
                     document.getElementById('botton-logout').style.display = 'none';
+                    document.getElementById('botton-admin').style.display = 'none';
                 }
             });
         };
 
-        // FUNZIONE SWITCH TRA VISTA PUBBLICA E PRIVATA
-        function cambiaVista(tipoVista) {
-            vistaAttuale = tipoVista;
+        function calcolaStatoDocumento(doc) {
+            if (doc.archiviato) return { codice: 'archiviato', classeTesto: 'testo-archiviato', testo: 'Archiviato', icona: 'fa-box-archive', classeRiga: 'row-sfumato-archiviato', peso: 0 };
             
+            const oggi = new Date(); oggi.setHours(0,0,0,0);
+            const dataScad = new Date(doc.data_scadenza); dataScad.setHours(0,0,0,0);
+            
+            const diffTempo = dataScad - oggi;
+            const giorni = Math.round(diffTempo / (1000 * 60 * 60 * 24));
+
+            if (giorni < 0) {
+                return { codice: 'scaduto', classeTesto: 'testo-scaduto', testo: 'Scaduto', icona: 'fa-circle-xmark', classeRiga: 'row-sfumato-scaduto', peso: 3 };
+            } 
+            
+            const preavviso = doc.preavviso || '4_mesi';
+            let allertaAttiva = false;
+            
+            if (preavviso === '7_mesi' && giorni <= 210) allertaAttiva = true;
+            else if (preavviso === '4_mesi' && giorni <= 120) allertaAttiva = true;
+            else if (preavviso === '1_mese' && giorni <= 30) allertaAttiva = true;
+            else if (preavviso === '1_settimana' && giorni <= 7) allertaAttiva = true;
+            
+            if (allertaAttiva) {
+                return { codice: 'allerta', classeTesto: 'testo-allerta', testo: 'In Scadenza', icona: 'fa-circle-exclamation', classeRiga: 'row-sfumato-allerta', peso: 2 };
+            }
+            
+            return { codice: 'verde', classeTesto: 'testo-verde', testo: 'Regolare', icona: 'fa-circle-check', classeRiga: 'row-sfumato-verde', peso: 1 };
+        }
+
+        function cambiaVista(tipoVista) {
+            pulisciRicerca(false);
+            vistaAttuale = tipoVista;
             document.getElementById('btn-vista-porto').classList.remove('attivo');
             document.getElementById('btn-vista-personale').classList.remove('attivo');
-            
-            if (tipoVista === 'porto') {
-                document.getElementById('btn-vista-porto').classList.add('attivo');
-            } else {
-                document.getElementById('btn-vista-personale').classList.add('attivo');
-            }
-            
-            currentSezioneId = null;
-            document.getElementById('view-sezione').style.display = 'none';
-            document.getElementById('view-archivio').style.display = 'block';
-            renderSezioni();
+            if (tipoVista === 'porto') document.getElementById('btn-vista-porto').classList.add('attivo');
+            else document.getElementById('btn-vista-personale').classList.add('attivo');
+            mostraArchivio();
         }
 
-        // FUNZIONE LOGIN
-        async function eseguiLogin(event) {
-            event.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
+        function gestisciRicerca() {
+            const inputVal = document.getElementById('input-ricerca').value;
+            const btnClear = document.getElementById('btn-clear-search');
+            
+            if (inputVal && inputVal.trim().length > 0) {
+                btnClear.style.display = 'block';
+                eseguiRicerca(inputVal.trim().toLowerCase());
+            } else {
+                pulisciRicerca(true);
+            }
+        }
 
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password
+        function pulisciRicerca(ripristinaVista = true) {
+            document.getElementById('input-ricerca').value = '';
+            document.getElementById('btn-clear-search').style.display = 'none';
+            document.getElementById('view-ricerca').style.display = 'none';
+            
+            if (ripristinaVista) {
+                if (currentSezioneId) document.getElementById('view-sezione').style.display = 'block';
+                else document.getElementById('view-archivio').style.display = 'block';
+            }
+        }
+
+        function eseguiRicerca(query) {
+            document.getElementById('view-archivio').style.display = 'none';
+            document.getElementById('view-sezione').style.display = 'none';
+            document.getElementById('view-ricerca').style.display = 'block';
+
+            const tbody = document.getElementById('lista-documenti-ricerca');
+            const msgVuoto = document.getElementById('ricerca-vuota-messaggio');
+            tbody.innerHTML = '';
+
+            const sezioniAllowedIds = sezioni.filter(s => {
+                if (vistaAttuale === 'porto') {
+                    if (s.privato === true) return false;
+                    if (currentUserRole === 'admin') return true;
+                    return userPermissions.includes(s.id);
+                } else {
+                    return s.privato === true && s.user_id === currentUserId;
+                }
+            }).map(s => s.id);
+
+            let docFiltrati = documentoList.filter(d => 
+                sezioniAllowedIds.includes(d.sezione_id) && 
+                d.nome.toLowerCase().includes(query)
+            );
+
+            if (docFiltrati.length === 0) { msgVuoto.style.display = 'block'; return; }
+            msgVuoto.style.display = 'none';
+
+            docFiltrati.sort((a, b) => {
+                if (a.archiviato !== b.archiviato) return a.archiviato ? 1 : -1;
+                const statoA = calcolaStatoDocumento(a);
+                const statoB = calcolaStatoDocumento(b);
+                if (statoA.peso !== statoB.peso) return statoB.peso - statoA.peso;
+                return new Date(a.data_scadenza) - new Date(b.data_scadenza);
             });
 
-            if (error) {
-                alert("❌ Errore di Accesso:\n" + error.message + "\n\nVerifica l'email e la password inserite.");
-            }
-        }
+            docFiltrati.forEach(doc => {
+                const tr = document.createElement('tr');
+                const stato = calcolaStatoDocumento(doc);
+                tr.className = stato.classeRiga;
 
-        // FUNZIONE LOGOUT
-        async function eseguiLogout() {
-            if(confirm("Vuoi disconnetterti dall'applicazione?")) {
-                const { error } = await supabaseClient.auth.signOut();
-                if (error) alert("Errore durante l'uscita: " + error.message);
-            }
+                const sez = sezioni.find(s => s.id === doc.sezione_id);
+                const nomeSezione = sez ? sez.nome : 'Sconosciuta';
+
+                let iconaSpillaAllegato = '';
+                let pulsanteConsultazione = '';
+                
+                if (doc.file_path) {
+                    iconaSpillaAllegato = `<i class="fa-solid fa-paperclip" style="opacity: 0.7; font-size:0.9rem; margin-right:8px;"></i>`;
+                    pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-apri" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i> Apri</button>`;
+                } else {
+                    pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-nulla" disabled><i class="fa-solid fa-eye-slash"></i> No File</button>`;
+                }
+
+                let bottoniAzione = doc.archiviato ? 
+                    `${pulsanteConsultazione}
+                    <button class="btn-azione-riga btn-azione-ripristina" onclick="ripristinaDocumento('${doc.id}')"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+                    <button class="btn-azione-riga btn-azione-rimuovi" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash-can"></i></button>` : 
+                    `${pulsanteConsultazione}
+                    <button class="btn-azione-riga btn-azione-rinnova" onclick="apriModalDocumento('${doc.id}')"><i class="fa-solid fa-rotate"></i></button>
+                    <button class="btn-azione-riga btn-azione-archivia" onclick="archiviaDocumento('${doc.id}')"><i class="fa-solid fa-box-archive"></i></button>`;
+
+                const dataFormattata = new Date(doc.data_scadenza).toLocaleDateString('it-IT', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-size:0.75rem; color:var(--grigio-luce); text-transform:uppercase; margin-bottom:4px; font-weight:700;"><i class="fa-regular fa-folder-open"></i> ${nomeSezione}</div>
+                        ${iconaSpillaAllegato}<strong>${doc.nome}</strong>
+                    </td>
+                    <td><i class="fa-regular fa-calendar-days" style="margin-right:6px; opacity:0.6;"></i>${dataFormattata}</td>
+                    <td><span class="status-testo ${stato.classeTesto}"><i class="fa-solid ${stato.icona}"></i> ${stato.testo}</span></td>
+                    <td style="text-align: right; white-space: nowrap;">${bottoniAzione}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         async function caricaDatiDalCloud() {
             try {
+                // 1. CARICAMENTO RUOLO E PERMESSI
+                let { data: prof } = await supabaseClient.from('profili').select('ruolo').eq('id', currentUserId).single();
+                if (prof) currentUserRole = prof.ruolo;
+
+                if (currentUserRole === 'admin') {
+                    document.getElementById('botton-admin').style.display = 'inline-flex';
+                    let { data: allP } = await supabaseClient.from('profili').select('*');
+                    tuttiIProfili = allP || [];
+                } else {
+                    document.getElementById('botton-admin').style.display = 'none';
+                    let { data: perms } = await supabaseClient.from('permessi_cartelle').select('sezione_id').eq('user_id', currentUserId);
+                    userPermissions = perms ? perms.map(p => p.sezione_id) : [];
+                }
+
+                // 2. CARICAMENTO DATI
                 let { data: dataSez, error: errSez } = await supabaseClient.from('sezioni').select('*').order('nome');
                 if (errSez) throw errSez;
                 sezioni = dataSez || [];
-
+                
                 let { data: dataDoc, error: errDoc } = await supabaseClient.from('documenti').select('*');
                 if (errDoc) throw errDoc;
                 documentoList = dataDoc || [];
 
-                if (currentSezioneId) {
-                    renderDocumenti();
-                } else {
-                    renderSezioni();
-                }
-            } catch (error) {
-                alert("Errore di comunicazione Cloud Supabase:\n" + error.message);
-            }
+                const inRicerca = document.getElementById('view-ricerca').style.display === 'block';
+                if (inRicerca) gestisciRicerca(); 
+                else if (currentSezioneId) renderDocumenti(); 
+                else renderSezioni();
+
+            } catch (error) { alert("Errore Cloud:\n" + error.message); }
         }
 
         function mostraArchivio() {
+            pulisciRicerca(false);
             currentSezioneId = null;
             document.getElementById('view-sezione').style.display = 'none';
             document.getElementById('view-archivio').style.display = 'block';
@@ -708,9 +601,25 @@
         }
 
         function mostraSezione(sezioneId) {
+            pulisciRicerca(false);
             currentSezioneId = sezioneId;
-            const sez = sezioni.find(s => s.id === sezioneId);
-            document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome} ${sez.privato ? '<span style="font-size:1rem; vertical-align:middle; color:var(--grigio-luce);"><i class="fa-solid fa-lock"></i> Riservata</span>' : ''}`;
+            const btnNuovo = document.getElementById('btn-crea-scadenza-in-sezione');
+            
+            if (sezioneId === 'archivio_storico') {
+                document.getElementById('titolo-sezione').innerHTML = `<i class="fa-solid fa-boxes-stacked"></i> Archivio Storico Generale`;
+                if(btnNuovo) btnNuovo.style.display = 'none'; 
+            } else {
+                const sez = sezioni.find(s => s.id === sezioneId);
+                document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome} ${sez.privato ? '<span style="font-size:1rem; vertical-align:middle; color:var(--grigio-luce);"><i class="fa-solid fa-lock"></i> Riservata</span>' : ''}`;
+                
+                // Se sei operatore nella vista condivisa, non puoi creare documenti
+                if (currentUserRole === 'operatore' && vistaAttuale === 'porto') {
+                    if(btnNuovo) btnNuovo.style.display = 'none';
+                } else {
+                    if(btnNuovo) btnNuovo.style.display = 'inline-flex';
+                }
+            }
+            
             document.getElementById('view-archivio').style.display = 'none';
             document.getElementById('view-sezione').style.display = 'block';
             renderDocumenti();
@@ -718,155 +627,233 @@
 
         function renderSezioni() {
             const griglia = document.getElementById('griglia-sezioni');
+            if (!griglia) return;
             griglia.innerHTML = '';
 
             const sezioniFiltrate = sezioni.filter(s => {
                 if (vistaAttuale === 'porto') {
-                    return s.privato === false || s.privato === null;
+                    if (s.privato === true) return false;
+                    if (currentUserRole === 'admin') return true;
+                    return userPermissions.includes(s.id); // L'operatore vede solo le cartelle autorizzate
                 } else {
                     return s.privato === true && s.user_id === currentUserId;
                 }
             });
 
             sezioniFiltrate.forEach(sez => {
-                const docDellaSezione = documentoList.filter(d => d.sezione_id === sez.id);
-                const docAttivi = docDellaSezione.filter(d => !d.archiviato);
-                
+                const docDellaSezione = documentoList.filter(d => d.sezione_id === sez.id && !d.archiviato);
                 const contaDoc = docDellaSezione.length;
-                const testoDoc = contaDoc === 1 ? '1 Documento' : `${contaDoc} Documenti`;
+                const testoDoc = contaDoc === 1 ? '1 Attivo' : `${contaDoc} Attivi`;
 
-                let coloreSemaforo = 'sem-verde';
-                let testoSemaforo = 'In Regola';
-                let iconaSemaforo = 'fa-circle-check';
+                let pesoMassimoTrovato = -1;
+                let iconaSemaforoBusta = `<i class="fa-solid fa-folder" style="color:var(--grigio-luce);"></i> Vuota`;
 
-                if (docAttivi.length > 0) {
-                    let minGiorniRimanenti = Infinity;
-                    const oggi = new Date();
-
-                    docAttivi.forEach(doc => {
-                        const dataScad = new Date(doc.data_scadenza);
-                        const diffTempo = dataScad - oggi;
-                        const giorni = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
-                        if (giorni < minGiorniRimanenti) {
-                            minGiorniRimanenti = giorni;
+                if (docDellaSezione.length > 0) {
+                    docDellaSezione.forEach(doc => {
+                        const statoDoc = calcolaStatoDocumento(doc);
+                        if (statoDoc.peso > pesoMassimoTrovato) { 
+                            pesoMassimoTrovato = statoDoc.peso; 
+                            if(statoDoc.peso === 3) iconaSemaforoBusta = `<i class="fa-solid fa-circle-xmark" style="color:#9B2C2C;"></i> Scaduto`;
+                            else if(statoDoc.peso === 2) iconaSemaforoBusta = `<i class="fa-solid fa-circle-exclamation" style="color:#C05621;"></i> Allerta`;
+                            else iconaSemaforoBusta = `<i class="fa-solid fa-circle-check" style="color:#2F855A;"></i> Regolare`;
                         }
                     });
+                }
 
-                    if (minGiorniRimanenti < 0) {
-                        coloreSemaforo = 'sem-nero';
-                        testoSemaforo = 'SCADUTO!';
-                        iconaSemaforo = 'fa-circle-xmark';
-                    } else if (minGiorniRimanenti <= 30) {
-                        coloreSemaforo = 'sem-rosso';
-                        testoSemaforo = 'Scadenza imminente (<1 mese)';
-                        iconaSemaforo = 'fa-triangle-exclamation';
-                    } else if (minGiorniRimanenti <= 120) {
-                        coloreSemaforo = 'sem-giallo';
-                        testoSemaforo = 'Attenzione (<4 mesi)';
-                        iconaSemaforo = 'fa-circle-exclamation';
-                    }
-                } else if (docDellaSezione.length > 0) {
-                    testoSemaforo = 'Storico Archiviato';
-                } else {
-                    testoSemaforo = 'Vuota';
+                // Nascondiamo il tasto di cancellazione cartella agli operatori nella vista porto
+                let btnCestino = '';
+                if (currentUserRole === 'admin' || vistaAttuale === 'personale') {
+                    btnCestino = `<button class="btn-elimina-sezione" title="Cancella Cartella" onclick="eliminaSezione(event, '${sez.id}')"><i class="fa-solid fa-trash-can"></i></button>`;
                 }
 
                 const div = document.createElement('div');
                 div.className = sez.privato ? 'busta busta-privata' : 'busta';
                 div.onclick = () => mostraSezione(sez.id);
                 div.innerHTML = `
-                    <button class="btn-elimina-sezione" title="Cancella" onclick="eliminaSezione(event, '${sez.id}')">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                    <i class="fa-solid ${sez.icona} icona-cartella"></i>
+                    ${btnCestino}
+                    <i class="fa-solid fa-file-contract icona-cartella"></i>
                     <h3>${sez.nome}</h3>
                     <span class="badge-documenti">${testoDoc}</span>
-                    <span class="semaforo-busta ${coloreSemaforo}">
-                        <i class="fa-solid ${iconaSemaforo}"></i> ${testoSemaforo}
-                    </span>
+                    <span class="status-testo">${iconaSemaforoBusta}</span>
                 `;
                 griglia.appendChild(div);
             });
 
-            const btnAggiungi = document.createElement('div');
-            btnAggiungi.className = 'busta busta-aggiungi';
-            btnAggiungi.onclick = apriModalSezione;
-            btnAggiungi.innerHTML = `
-                <i class="fa-solid fa-plus icona-cartella"></i>
-                <h3>${vistaAttuale === 'porto' ? 'Crea Sezione Porto' : 'Crea Sezione Privata'}</h3>
+            // TASTO DIRETTIVO AGGIUNGI CARTELLA (nascosto agli operatori sulla vista porto)
+            if (currentUserRole === 'admin' || vistaAttuale === 'personale') {
+                const btnAggiungi = document.createElement('div');
+                btnAggiungi.className = 'busta busta-aggiungi';
+                btnAggiungi.onclick = apriModalSezione;
+                btnAggiungi.innerHTML = `<i class="fa-solid fa-plus icona-cartella"></i><h3>Crea Cartella</h3>`;
+                griglia.appendChild(btnAggiungi);
+            }
+
+            // 📦 CARTELLA SPECIALE "ARCHIVIO STORICO" FISSA SOTTO
+            const sezioniFiltrateIds = sezioniFiltrate.map(s => s.id);
+            const contaArchiviati = documentoList.filter(d => d.archiviato && sezioniFiltrateIds.includes(d.sezione_id)).length;
+            
+            const divArchivioSistema = document.createElement('div');
+            divArchivioSistema.className = 'busta busta-archivio-sistema';
+            divArchivioSistema.onclick = () => mostraSezione('archivio_storico');
+            divArchivioSistema.innerHTML = `
+                <i class="fa-solid fa-boxes-stacked icona-cartella"></i>
+                <h3>Archivio Storico</h3>
+                <span class="badge-documenti" style="background-color:#CBD5E0; color:#4A5568;">${contaArchiviati} File Memorizzati</span>
+                <span class="status-testo" style="color:#4A5568;"><i class="fa-solid fa-box-archive"></i> Consulta Storico</span>
             `;
-            griglia.appendChild(btnAggiungi);
+            griglia.appendChild(divArchivioSistema);
         }
 
         function renderDocumenti() {
             const tbody = document.getElementById('lista-documenti');
             const msgVuoto = document.getElementById('tabella-vuota-messaggio');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            const docFiltrati = documentoList.filter(d => d.sezione_id === currentSezioneId);
+            const sezioniFiltrateIds = sezioni.filter(s => {
+                if (vistaAttuale === 'porto') {
+                    if (s.privato === true) return false;
+                    if (currentUserRole === 'admin') return true;
+                    return userPermissions.includes(s.id);
+                } else {
+                    return s.privato === true && s.user_id === currentUserId;
+                }
+            }).map(s => s.id);
 
-            if (docFiltrati.length === 0) {
-                msgVuoto.style.display = 'block';
-                return;
+            let docFiltrati = [];
+            
+            if (currentSezioneId === 'archivio_storico') {
+                docFiltrati = documentoList.filter(d => d.archiviato && sezioniFiltrateIds.includes(d.sezione_id));
+            } else {
+                docFiltrati = documentoList.filter(d => d.sezione_id === currentSezioneId && !d.archiviato);
             }
+
+            if (docFiltrati.length === 0) { msgVuoto.style.display = 'block'; return; }
             msgVuoto.style.display = 'none';
 
             docFiltrati.sort((a, b) => {
                 if (a.archiviato !== b.archiviato) return a.archiviato ? 1 : -1;
+                const statoA = calcolaStatoDocumento(a);
+                const statoB = calcolaStatoDocumento(b);
+                if (statoA.peso !== statoB.peso) return statoB.peso - statoA.peso;
                 return new Date(a.data_scadenza) - new Date(b.data_scadenza);
             });
 
             docFiltrati.forEach(doc => {
                 const tr = document.createElement('tr');
-                if (doc.archiviato) tr.className = 'riga-archiviato';
+                const stato = calcolaStatoDocumento(doc);
+                tr.className = stato.classeRiga;
 
-                const oggi = new Date();
-                const dataScad = new Date(doc.data_scadenza);
-                const diffTempo = dataScad - oggi;
-                const giorniRimanenti = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
-
-                let badgeStato = '';
-                let bottoniAzione = `<button title="Vedi File" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i></button>`;
-
-                if (doc.archiviato) {
-                    badgeStato = `<span class="status status-archiviato"><i class="fa-solid fa-box-archive"></i> Archivio Storico</span>`;
-                    bottoniAzione += `<button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash"></i></button>`;
+                let iconaSpillaAllegato = '';
+                let pulsanteConsultazione = '';
+                
+                if (doc.file_path) {
+                    iconaSpillaAllegato = `<i class="fa-solid fa-paperclip" style="opacity: 0.7; font-size:0.9rem; margin-right:8px;"></i>`;
+                    pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-apri" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i> Apri File</button>`;
                 } else {
-                    if (giorniRimanenti < 0) {
-                        badgeStato = `<span class="status status-nero"><i class="fa-solid fa-circle-xmark"></i> Scaduto</span>`;
-                    } else if (giorniRimanenti <= 30) {
-                        badgeStato = `<span class="status status-rosso"><i class="fa-solid fa-triangle-exclamation"></i> Critico (<30gg)</span>`;
-                    } else if (giorniRimanenti <= 120) {
-                        badgeStato = `<span class="status status-alert"><i class="fa-solid fa-circle-exclamation"></i> Giallo (<4 mesi)</span>`;
-                    } else {
-                        badgeStato = `<span class="status status-ok"><i class="fa-solid fa-circle-check"></i> Valido</span>`;
-                    }
-                    
-                    bottoniAzione += `<button title="Aggiorna / Rinnova" class="btn-rinnova" onclick="apriModalDocumento('${doc.id}')"><i class="fa-solid fa-rotate"></i></button>`;
-                    bottoniAzione += `<button title="Elimina" class="btn-elimina" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash"></i></button>`;
+                    pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-nulla" disabled><i class="fa-solid fa-eye-slash"></i> Senza File</button>`;
                 }
 
-                const dataFormattata = dataScad.toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
+                // Controllo poteri Operatore vs Admin su rinnovo/eliminazione
+                let puoAgire = (currentUserRole === 'admin' || vistaAttuale === 'personale');
+
+                let bottoniAzione = '';
+                if (doc.archiviato) {
+                    bottoniAzione = puoAgire ? `
+                        ${pulsanteConsultazione}
+                        <button class="btn-azione-riga btn-azione-ripristina" onclick="ripristinaDocumento('${doc.id}')"><i class="fa-solid fa-arrow-rotate-left"></i> Ripristina</button>
+                        <button class="btn-azione-riga btn-azione-rimuovi" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash-can"></i> Elimina</button>
+                    ` : `${pulsanteConsultazione}`;
+                } else {
+                    bottoniAzione = puoAgire ? `
+                        ${pulsanteConsultazione}
+                        <button class="btn-azione-riga btn-azione-rinnova" onclick="apriModalDocumento('${doc.id}')"><i class="fa-solid fa-rotate"></i> Rinnova</button>
+                        <button class="btn-azione-riga btn-azione-archivia" onclick="archiviaDocumento('${doc.id}')"><i class="fa-solid fa-box-archive"></i> Archivia</button>
+                    ` : `${pulsanteConsultazione}`;
+                }
+
+                const dataFormattata = new Date(doc.data_scadenza).toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
 
                 tr.innerHTML = `
-                    <td><strong>${doc.nome}</strong></td>
-                    <td>${doc.archiviato ? '---' : dataFormattata}</td>
-                    <td>${badgeStato}</td>
-                    <td class="azioni" style="text-align: center;">
-                        ${bottoniAzione}
-                    </td>
+                    <td>${iconaSpillaAllegato}<strong>${doc.nome}</strong></td>
+                    <td><i class="fa-regular fa-calendar-days" style="margin-right:6px; opacity:0.6;"></i>${dataFormattata}</td>
+                    <td><span class="status-testo ${stato.classeTesto}"><i class="fa-solid ${stato.icona}"></i> ${stato.testo}</span></td>
+                    <td style="text-align: right; white-space: nowrap;">${bottoniAzione}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function apriModalSezione() {
-            const titolo = document.getElementById('titolo-modal-sezione');
-            if (vistaAttuale === 'personale') {
-                titolo.innerHTML = `<i class="fa-solid fa-lock"></i> Nuova Cartella Riservata`;
+        // --- FUNZIONI MODALI PANNELLO ADMIN PERMESSI ---
+        function apriGestioneUtenti() {
+            const select = document.getElementById('select-operatore');
+            select.innerHTML = '<option value="">-- Seleziona account --</option>';
+            
+            const operatori = tuttiIProfili.filter(p => p.ruolo === 'operatore');
+            if (operatori.length === 0) {
+                select.innerHTML += `<option disabled>Nessun operatore registrato</option>`;
             } else {
-                titolo.innerHTML = `<i class="fa-solid fa-folder-plus"></i> Nuova Cartella Archivio Porto`;
+                operatori.forEach(p => {
+                    select.innerHTML += `<option value="${p.id}">${p.email}</option>`;
+                });
             }
+            
+            document.getElementById('lista-checkbox-cartelle').innerHTML = '';
+            document.getElementById('modal-utenti').classList.add('active');
+        }
+
+        function chiudiGestioneUtenti() {
+            document.getElementById('modal-utenti').classList.remove('active');
+        }
+
+        async function caricaPermessiOperatore(operatoreId) {
+            const container = document.getElementById('lista-checkbox-cartelle');
+            container.innerHTML = '<span style="color:var(--grigio-luce);"><i class="fa-solid fa-spinner fa-spin"></i> Caricamento...</span>';
+            if(!operatoreId) { container.innerHTML = ''; return; }
+
+            const { data: perms } = await supabaseClient.from('permessi_cartelle').select('sezione_id').eq('user_id', operatoreId);
+            const permIds = perms ? perms.map(p => p.sezione_id) : [];
+
+            const cartelleCondivise = sezioni.filter(s => s.privato === false || s.privato === null);
+            container.innerHTML = '';
+            
+            if (cartelleCondivise.length === 0) {
+                container.innerHTML = '<span style="color:var(--grigio-luce);">Nessuna cartella condivisa creata nel porto.</span>';
+                return;
+            }
+
+            cartelleCondivise.forEach(c => {
+                const checked = permIds.includes(c.id) ? 'checked' : '';
+                container.innerHTML += `
+                    <div class="chk-permesso-riga">
+                        <input type="checkbox" id="chk-${c.id}" value="${c.id}" class="chk-permesso" ${checked}>
+                        <label for="chk-${c.id}"><i class="fa-solid fa-folder-open" style="color:var(--azzurro); margin-right:6px;"></i> ${c.nome}</label>
+                    </div>
+                `;
+            });
+        }
+
+        async function salvaPermessiOperatore() {
+            const operatoreId = document.getElementById('select-operatore').value;
+            if(!operatoreId) return alert("Devi selezionare un dipendente/operatore dal menu.");
+
+            const checkboxes = document.querySelectorAll('.chk-permesso');
+            const nuoveSezioni = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+
+            await supabaseClient.from('permessi_cartelle').delete().eq('user_id', operatoreId);
+
+            if (nuoveSezioni.length > 0) {
+                const inserts = nuoveSezioni.map(sid => ({ user_id: operatoreId, sezione_id: sid }));
+                await supabaseClient.from('permessi_cartelle').insert(inserts);
+            }
+
+            alert("Permessi aggiornati con successo!");
+            chiudiGestioneUtenti();
+        }
+
+        // --- FUNZIONI CARICAMENTO E SALVATAGGIO CLOUD ---
+        function apriModalSezione() {
+            document.getElementById('titolo-modal-sezione').innerHTML = vistaAttuale === 'personale' ? `<i class="fa-solid fa-lock"></i> Nuova Cartella Riservata` : `<i class="fa-solid fa-folder-plus"></i> Nuova Cartella`;
             document.getElementById('modal-sezione').classList.add('active'); 
         }
         
@@ -875,23 +862,17 @@
             document.getElementById('form-nuova-sezione').reset();
         }
 
-        document.getElementById('form-nuovo-documento').addEventListener('submit', function(e) {
-            if(e.submitter) e.submitter.disabled = true;
-        });
-
         function apriModalDocumento(idDocDaRinnovare = null) {
             idDocumentoDaRinnovare = idDocDaRinnovare;
             const titolo = document.getElementById('titolo-modal-documento');
-            const inputNome = document.getElementById('doc-nome');
             
             if (idDocumentoDaRinnovare) {
-                titolo.innerHTML = `<i class="fa-solid fa-rotate"></i> Rinnova e Archivia Vecchio Certificato`;
+                titolo.innerHTML = `<i class="fa-solid fa-rotate"></i> Aggiorna e Archivia Vecchia Scadenza`;
                 const vecchioDoc = documentoList.find(d => d.id === idDocumentoDaRinnovare);
-                if (vecchioDoc) inputNome.value = vecchioDoc.nome;
+                if (vecchioDoc) document.getElementById('doc-nome').value = vecchioDoc.nome;
             } else {
-                titolo.innerHTML = `<i class="fa-solid fa-file-circle-plus"></i> Archivia Documento Nuovo`;
+                titolo.innerHTML = `<i class="fa-solid fa-file-circle-plus"></i> Imposta Nuova Scadenza`;
             }
-            
             document.getElementById('modal-documento').classList.add('active');
         }
 
@@ -908,86 +889,84 @@
             else feedback.innerText = "";
         }
 
+        async function eseguiLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+            if (error) alert("❌ Errore Accesso:\n" + error.message);
+        }
+
+        async function eseguiLogout() { if(confirm("Disconnettersi?")) await supabaseClient.auth.signOut(); }
+
         async function salvaNuovaSezione(event) {
             event.preventDefault();
             const nome = document.getElementById('input-nome-sezione').value;
-            const icona = document.getElementById('input-icona-sezione').value;
-
             const èPrivato = (vistaAttuale === 'personale');
-            const utenteProprietario = èPrivato ? currentUserId : null;
-
-            const { error } = await supabaseClient.from('sezioni').insert([{ 
-                nome: nome, 
-                icona: icona,
-                privato: èPrivato,
-                user_id: utenteProprietario
-            }]);
-            
-            if (error) alert("Errore: " + error.message);
-            else { chiudiModalSezione(); await caricaDatiDalCloud(); }
-        }
-
-        async function eliminaSezione(event, idSezione) {
-            event.stopPropagation();
-            if(confirm("Vuoi cancellare questa sezione e tutti i suoi certificati storici ed attivi?")) {
-                const { error } = await supabaseClient.from('sezioni').delete().eq('id', idSezione);
-                if (error) alert(error.message);
-                else await caricaDatiDalCloud();
-            }
+            const { error } = await supabaseClient.from('sezioni').insert([{ nome: nome, icona: 'fa-file-contract', privato: èPrivato, user_id: èPrivato ? currentUserId : null }]);
+            if (error) alert("Errore: " + error.message); else { chiudiModalSezione(); await caricaDatiDalCloud(); }
         }
 
         async function salvaNuovoDocumento(event) {
             event.preventDefault();
             const nome = document.getElementById('doc-nome').value;
             const scadenza = document.getElementById('doc-scadenza').value;
+            const preavviso = document.getElementById('doc-preavviso').value;
             const fileInput = document.getElementById('doc-file');
+            let percorsoFile = null;
 
-            if(fileInput.files.length === 0) { alert("Seleziona un file o scatta una foto!"); return; }
-
-            const file = fileInput.files[0];
-            const estensione = file.name.split('.').pop();
-            const percorsoFile = `${currentSezioneId}/${Date.now()}.${estensione}`;
-
-            const { error: errUpload } = await supabaseClient.storage.from('file_documenti').upload(percorsoFile, file);
-            if (errUpload) { alert("Errore Cloud Storage: " + errUpload.message); return; }
-
-            if (idDocumentoDaRinnovare) {
-                const { error: errArchive } = await supabaseClient
-                    .from('documenti')
-                    .update({ archiviato: true })
-                    .eq('id', idDocumentoDaRinnovare);
-                
-                if (errArchive) {
-                    alert("Errore durante l'archiviazione del vecchio documento: " + errArchive.message);
-                    return;
-                }
+            if (fileInput.files && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                percorsoFile = `${currentSezioneId}/${Date.now()}.${file.name.split('.').pop()}`;
+                const { error: errUpload } = await supabaseClient.storage.from('file_documenti').upload(percorsoFile, file);
+                if (errUpload) { alert("Errore File: " + errUpload.message); return; }
             }
 
-            const { error: errInsert } = await supabaseClient.from('documenti').insert([{
-                sezione_id: currentSezioneId,
-                nome: nome,
-                data_scadenza: scadenza,
-                file_path: percorsoFile,
-                archiviato: false
-            }]);
+            if (idDocumentoDaRinnovare) {
+                const { error: errArchive } = await supabaseClient.from('documenti').update({ archiviato: true }).eq('id', idDocumentoDaRinnovare);
+                if (errArchive) { alert("Errore Storico: " + errArchive.message); return; }
+            }
 
-            if (errInsert) alert("Errore Database: " + errInsert.message);
-            else { chiudiModalDocumento(); await caricaDatiDalCloud(); }
+            const { error: errInsert } = await supabaseClient.from('documenti').insert([{ sezione_id: currentSezioneId, nome: nome, data_scadenza: scadenza, file_path: percorsoFile, archiviato: false, preavviso: preavviso }]);
+            if (errInsert) alert("Errore Database: " + errInsert.message); else { chiudiModalDocumento(); await caricaDatiDalCloud(); }
+        }
+
+        async function eliminaSezione(event, idSezione) {
+            event.stopPropagation();
+            if(confirm("Attenzione: Vuoi eliminare l'intera cartella e tutti i file contenuti?")) {
+                const { error } = await supabaseClient.from('sezioni').delete().eq('id', idSezione);
+                if (error) alert(error.message); else await caricaDatiDalCloud();
+            }
+        }
+
+        async function archiviaDocumento(idDoc) {
+            if(confirm("Vuoi spostare questa scadenza nell'Archivio Storico? Scomparirà da questa lista.")) {
+                const { error } = await supabaseClient.from('documenti').update({ archiviato: true }).eq('id', idDoc);
+                if (error) { alert(error.message); return; }
+                await caricaDatiDalCloud();
+            }
+        }
+
+        async function ripristinaDocumento(idDoc) {
+            if(confirm("Vuoi ripristinare questo file? Tornerà immediatamente nella sua cartella attiva.")) {
+                const { error } = await supabaseClient.from('documenti').update({ archiviato: false }).eq('id', idDoc);
+                if (error) { alert(error.message); return; }
+                await caricaDatiDalCloud();
+            }
         }
 
         async function eliminaDocumento(idDoc, filePath) {
-            if(confirm("Vuoi rimuovere definitivamente questo file (attivo o storico) dal cloud?")) {
+            if(confirm("Attenzione: Azione irreversibile. Vuoi ELIMINARE definitivamente questo file dal server cloud?")) {
                 const { error: errDb } = await supabaseClient.from('documenti').delete().eq('id', idDoc);
                 if (errDb) { alert(errDb.message); return; }
-                await supabaseClient.storage.from('file_documenti').remove([filePath]);
+                if (filePath && filePath !== 'null' && filePath !== 'undefined') await supabaseClient.storage.from('file_documenti').remove([filePath]);
                 await caricaDatiDalCloud();
             }
         }
 
         function apriFileReale(filePath) {
             const { data } = supabaseClient.storage.from('file_documenti').getPublicUrl(filePath);
-            if (data && data.publicUrl) window.open(data.publicUrl, '_blank');
-            else alert("Impossibile scaricare il file.");
+            if (data && data.publicUrl) window.open(data.publicUrl, '_blank'); else alert("Impossibile scaricare il file.");
         }
     </script>
 </body>
