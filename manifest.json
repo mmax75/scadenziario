@@ -1,0 +1,33 @@
+{
+  "name": "Scadenziario",
+  "short_name": "Scadenziario",
+  "start_url": "/scadenziario/",
+  "display": "standalone",
+  "background_color": "#F0F4F8",
+  "theme_color": "#1B365D",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2991/2991112.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2991/2991112.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "share_target": {
+    "action": "/scadenziario/ricevi-file-condiviso",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "media",
+          "accept": ["image/*", "application/pdf"]
+        }
+      ]
+    }
+  }
+}

@@ -2,14 +2,15 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Scadenziario | Marina Porto Antico</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
         window.onerror = function(msg, url, line) {
-            alert("🚨 ERRORE DI SINTASSI RILEVATO!\n\nMessaggio: " + msg + "\nAlla riga: " + line);
+            alert("🚨 ERRORE RILEVATO!\n\nMessaggio: " + msg + "\nAlla riga: " + line);
             return false;
         };
     </script>
@@ -19,191 +20,213 @@
         :root {
             --blu-navy: #1B365D;
             --azzurro: #0077C8;
-            --sfondo: #F0F4F8;
+            --sfondo: #F4F7F9;
             --bianco: #FFFFFF;
             --grigio-testo: #4A5568;
             --grigio-luce: #718096;
-            --overlay: rgba(27, 54, 93, 0.6);
+            --overlay: rgba(15, 30, 50, 0.7);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--sfondo); color: #333; padding: 40px 15px; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--sfondo); color: #333; padding: 20px 15px; overflow-x: hidden; }
         .container { max-width: 1140px; margin: 0 auto; }
+
+        /* --- TOP APP BAR (Nuova struttura per evitare sovrapposizioni) --- */
+        .top-app-bar { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 20px; min-height: 40px; }
+        
+        .btn-logout { background-color: #FFF5F5; color: #E53E3E; border: 1px solid #FED7D7; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: none; transition: all 0.2s; align-items: center; gap: 6px; }
+        .btn-logout:hover { background-color: #E53E3E; color: var(--bianco); }
+
+        .btn-admin { background-color: #EBF8FF; color: #2B6CB0; border: 1px solid #BEE3F8; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: none; transition: all 0.2s; align-items: center; gap: 6px; }
+        .btn-admin:hover { background-color: #2B6CB0; color: var(--bianco); }
 
         /* --- SCHERMATA LOGIN --- */
         .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
-        .login-box { background-color: var(--bianco); padding: 40px 30px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(27, 54, 93, 0.08); border: 1px solid rgba(27, 54, 93, 0.04); text-align: center; }
-        .login-box i.logo-login { font-size: 3.5rem; color: var(--azzurro); margin-bottom: 15px; }
-        .login-box h2 { color: var(--blu-navy); margin-bottom: 8px; font-size: 1.6rem; font-weight: 700; }
-        .login-box p { color: var(--grigio-luce); font-size: 0.9rem; margin-bottom: 30px; }
+        .login-box { background-color: var(--bianco); padding: 40px 30px; border-radius: 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(27, 54, 93, 0.06); border: 1px solid rgba(27, 54, 93, 0.04); text-align: center; }
+        .login-box i.logo-login { font-size: 4rem; color: var(--azzurro); margin-bottom: 15px; }
+        .login-box h2 { color: var(--blu-navy); margin-bottom: 8px; font-size: 1.8rem; font-weight: 800; }
+        .login-box p { color: var(--grigio-luce); font-size: 0.95rem; margin-bottom: 30px; }
         .login-box .form-group { text-align: left; }
-        .btn-login { width: 100%; background-color: var(--blu-navy); color: var(--bianco); border: none; padding: 13px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background-color 0.2s; margin-top: 10px; }
+        .btn-login { width: 100%; background-color: var(--blu-navy); color: var(--bianco); border: none; padding: 15px; border-radius: 14px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: background-color 0.2s; margin-top: 10px; }
         .btn-login:hover { background-color: var(--azzurro); }
 
-        /* --- INTESTAZIONE --- */
-        .header { text-align: center; margin-bottom: 35px; position: relative; }
-        .header h1 { color: var(--blu-navy); font-size: 2.4rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 14px; font-weight: 700; }
-        .header p { color: var(--grigio-luce); font-size: 1.1rem; letter-spacing: 0.3px; }
-        
-        .btn-logout { position: absolute; top: 0; right: 0; background-color: #FFF5F5; color: #E53E3E; border: 1px solid #FED7D7; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: none; transition: all 0.2s; }
-        .btn-logout:hover { background-color: #E53E3E; color: var(--bianco); }
-
-        .btn-admin { position: absolute; top: 0; right: 90px; background-color: #EBF8FF; color: #2B6CB0; border: 1px solid #BEE3F8; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: none; transition: all 0.2s; }
-        .btn-admin:hover { background-color: #2B6CB0; color: var(--bianco); }
+        /* --- INTESTAZIONE APP --- */
+        .header { text-align: center; margin-bottom: 35px; }
+        .header h1 { color: var(--blu-navy); font-size: 2.2rem; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { color: var(--grigio-luce); font-size: 1rem; font-weight: 500; }
 
         /* --- SELETTORE VISTE --- */
-        .nav-viste { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
-        .tab-button { background-color: #E2E8F0; color: var(--grigio-testo); border: none; padding: 12px 24px; border-radius: 12px; font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: all 0.25s ease; display: inline-flex; align-items: center; gap: 8px; }
-        .tab-button:hover { background-color: #CBD5E0; color: var(--blu-navy); }
-        .tab-button.attivo { background-color: var(--azzurro); color: var(--bianco); box-shadow: 0 4px 12px rgba(0, 119, 200, 0.2); }
-        .tab-button.attivo.tab-privato { background-color: var(--blu-navy); box-shadow: 0 4px 12px rgba(27, 54, 93, 0.2); }
+        .nav-viste { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; }
+        .tab-button { flex: 1; min-width: 150px; justify-content: center; background-color: #E2E8F0; color: var(--grigio-testo); border: none; padding: 14px 20px; border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .tab-button.attivo { background-color: var(--azzurro); color: var(--bianco); box-shadow: 0 8px 16px rgba(0, 119, 200, 0.25); }
+        .tab-button.attivo.tab-privato { background-color: var(--blu-navy); box-shadow: 0 8px 16px rgba(27, 54, 93, 0.25); }
 
         /* --- BARRA DI RICERCA --- */
-        .search-bar-container { position: relative; max-width: 600px; margin: 0 auto 40px auto; }
-        .search-bar-container i.fa-search { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--grigio-luce); font-size: 1.1rem; }
-        .search-bar-container input { width: 100%; padding: 14px 45px 14px 45px; border-radius: 30px; border: 2px solid #E2E8F0; font-size: 1rem; outline: none; transition: all 0.2s; box-shadow: 0 4px 15px rgba(27, 54, 93, 0.03); color: var(--blu-navy); font-weight: 500; }
-        .search-bar-container input:focus { border-color: var(--azzurro); box-shadow: 0 4px 20px rgba(0, 119, 200, 0.1); }
-        .search-bar-container input::placeholder { font-weight: normal; color: #A0AEC0; }
-        .btn-clear-search { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--grigio-luce); font-size: 1.2rem; cursor: pointer; padding: 5px; }
-        .btn-clear-search:hover { color: var(--rosso-allerta); }
+        .search-bar-container { position: relative; max-width: 100%; margin: 0 auto 35px auto; }
+        .search-bar-container i.fa-search { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--grigio-luce); font-size: 1.1rem; }
+        .search-bar-container input { width: 100%; padding: 16px 50px; border-radius: 30px; border: none; font-size: 1.05rem; outline: none; transition: all 0.2s; box-shadow: 0 8px 20px rgba(27, 54, 93, 0.05); color: var(--blu-navy); font-weight: 600; }
+        .search-bar-container input:focus { box-shadow: 0 8px 25px rgba(0, 119, 200, 0.15); }
+        .search-bar-container input::placeholder { font-weight: 500; color: #A0AEC0; }
+        .btn-clear-search { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--grigio-luce); font-size: 1.3rem; cursor: pointer; padding: 5px; }
 
         .app-content { display: none; }
 
         /* --- GRIGLIA CARTELLE --- */
-        .archivio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 40px; }
-        .busta { background-color: var(--bianco); border-radius: 0 16px 16px 16px; padding: 40px 24px 24px 24px; position: relative; box-shadow: 0 12px 30px rgba(27, 54, 93, 0.05); transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; border: 1px solid rgba(27, 54, 93, 0.04); }
-        .busta::before { content: ''; position: absolute; top: -16px; left: -1px; width: 105px; height: 16px; background-color: var(--azzurro); border-radius: 8px 8px 0 0; transition: background-color 0.3s ease; }
-        .busta:hover { transform: translateY(-6px); box-shadow: 0 22px 40px rgba(27, 54, 93, 0.12); border-color: rgba(0, 119, 200, 0.3); }
-        .busta:hover::before { background-color: var(--blu-navy); }
+        .archivio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+        .busta { background-color: var(--bianco); border-radius: 20px; padding: 35px 20px 25px 20px; position: relative; box-shadow: 0 10px 25px rgba(27, 54, 93, 0.04); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; border: 1px solid rgba(0,0,0,0.02); overflow: hidden; }
+        .busta::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background-color: var(--azzurro); transition: height 0.3s ease; }
         .busta.busta-privata::before { background-color: #4A5568; }
-        .busta.busta-privata:hover::before { background-color: var(--blu-navy); }
-        
-        .busta.busta-archivio-sistema { background-color: #E2E8F0; border: 1px solid #CBD5E0; }
+        .busta.busta-archivio-sistema { background-color: #F8FAFC; border: 1px solid #E2E8F0; }
         .busta.busta-archivio-sistema::before { background-color: #718096; }
-        .busta.busta-archivio-sistema i.icona-cartella { background: linear-gradient(135deg, #4A5568, #718096); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .busta.busta-archivio-sistema:hover::before { background-color: #4A5568; }
-
-        .busta i.icona-cartella { font-size: 3.6rem; background: linear-gradient(135deg, var(--blu-navy), var(--azzurro)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 18px; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .busta:hover i.icona-cartella { transform: scale(1.12) rotate(3deg); }
-        .busta h3 { font-size: 1.2rem; color: var(--blu-navy); margin-bottom: 10px; font-weight: 600; word-break: break-word; }
-        .badge-documenti { background-color: #EDF2F7; color: var(--blu-navy); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; margin-bottom: 16px; }
-        .semaforo-busta { display: inline-flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 700; padding: 8px 16px; border-radius: 30px; width: 100%; justify-content: center; margin-top: auto; letter-spacing: 0.3px; }
-        .btn-elimina-sezione { position: absolute; top: 12px; right: 14px; background: none; border: none; color: #E2E8F0; font-size: 1rem; cursor: pointer; transition: color 0.2s; padding: 5px; z-index: 10; }
-        .busta:hover .btn-elimina-sezione { color: #E53E3E; }
         
-        .busta-aggiungi { background-color: rgba(27, 54, 93, 0.02); border: 2px dashed #CBD5E0; box-shadow: none; justify-content: center; }
+        .busta i.icona-cartella { font-size: 3.5rem; background: linear-gradient(135deg, var(--blu-navy), var(--azzurro)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; }
+        .busta.busta-archivio-sistema i.icona-cartella { background: linear-gradient(135deg, #4A5568, #718096); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .busta h3 { font-size: 1.25rem; color: var(--blu-navy); margin-bottom: 12px; font-weight: 700; word-break: break-word; }
+        .badge-documenti { background-color: #EDF2F7; color: var(--blu-navy); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; margin-bottom: 16px; }
+        .status-testo { display: inline-flex; align-items: center; gap: 7px; font-size: 0.85rem; font-weight: 800; padding: 0; width: 100%; justify-content: center; margin-top: auto; letter-spacing: 0.3px; text-transform: uppercase; }
+        
+        .btn-elimina-sezione { position: absolute; top: 15px; right: 15px; background: rgba(226, 232, 240, 0.5); border: none; border-radius: 50%; width: 32px; height: 32px; color: #718096; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 10; }
+        .busta-aggiungi { background-color: transparent; border: 2px dashed #CBD5E0; box-shadow: none; justify-content: center; }
         .busta-aggiungi::before { display: none; }
-        .busta-aggiungi i { color: var(--grigio-luce); margin-bottom: 15px; background: none !important; -webkit-text-fill-color: initial !important; }
-        .busta-aggiungi h3 { color: var(--grigio-luce); }
-        .busta-aggiungi:hover { border-color: var(--azzurro); background-color: rgba(0, 119, 200, 0.04); }
-        .busta-aggiungi:hover i { transform: scale(1.1); color: var(--azzurro); }
-        .busta-aggiungi:hover h3 { color: var(--azzurro); }
+        .busta-aggiungi i { background: none; -webkit-text-fill-color: #A0AEC0; color: #A0AEC0; }
+        .busta-aggiungi h3 { color: #A0AEC0; }
 
         /* --- VISTE INTERNE --- */
         .view-sezione { display: none; }
-        .btn-indietro { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--grigio-luce); font-weight: bold; margin-bottom: 25px; cursor: pointer; font-size: 0.95rem; transition: color 0.2s; }
-        .btn-indietro:hover { color: var(--blu-navy); }
-        .header-sezione { display: flex; justify-content: space-between; align-items: center; background-color: var(--bianco); padding: 22px 28px; border-radius: 16px; border-left: 5px solid var(--azzurro); box-shadow: 0 4px 20px rgba(27, 54, 93, 0.03); margin-bottom: 25px; }
-        .header-sezione h2 { color: var(--blu-navy); font-size: 1.6rem; font-weight: 700; }
-        .btn-azione-principale { background-color: var(--azzurro); color: var(--bianco); border: none; padding: 12px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; transition: background-color 0.2s; }
-        .btn-azione-principale:hover { background-color: var(--blu-navy); }
+        .btn-indietro { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--grigio-luce); font-weight: 700; margin-bottom: 25px; cursor: pointer; font-size: 1rem; background-color: var(--bianco); padding: 12px 20px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
+        .header-sezione { display: flex; justify-content: space-between; align-items: center; background-color: var(--bianco); padding: 24px; border-radius: 20px; border-left: 6px solid var(--azzurro); box-shadow: 0 8px 25px rgba(27, 54, 93, 0.04); margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .header-sezione h2 { color: var(--blu-navy); font-size: 1.6rem; font-weight: 800; width: 100%; }
+        .btn-azione-principale { background-color: var(--azzurro); color: var(--bianco); border: none; padding: 14px 24px; border-radius: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; box-shadow: 0 4px 15px rgba(0, 119, 200, 0.2); width: 100%; }
 
-        /* TABELLE */
-        .tabella-wrapper { background-color: transparent; box-shadow: none; border: none; overflow: visible; }
-        .tabella-documenti { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        .tabella-documenti th { padding: 10px 24px; color: var(--grigio-luce); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.8px; border: none; text-align: left; }
-        
-        .tabella-documenti tbody tr { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .tabella-documenti td { padding: 14px 24px; font-size: 0.95rem; vertical-align: middle; border: none; }
-        .tabella-documenti td:first-child { border-radius: 12px 0 0 12px; }
-        .tabella-documenti td:last-child { border-radius: 0 12px 12px 0; }
-        .tabella-documenti tbody tr:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(27, 54, 93, 0.1); }
+        /* TABELLE DESKTOP */
+        .tabella-wrapper { background-color: transparent; border: none; overflow: visible; }
+        .tabella-documenti { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+        .tabella-documenti th { padding: 10px 24px; color: var(--grigio-luce); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; text-align: left; }
+        .tabella-documenti td { padding: 16px 24px; font-size: 1rem; vertical-align: middle; background-color: var(--bianco); }
+        .tabella-documenti td:first-child { border-radius: 16px 0 0 16px; font-weight: 600; color: var(--blu-navy); }
+        .tabella-documenti td:last-child { border-radius: 0 16px 16px 0; }
+        .tabella-documenti tbody tr { box-shadow: 0 6px 15px rgba(27, 54, 93, 0.04); }
 
-        /* --- 🎨 COLORI DI SFONDO RIGHE --- */
-        .row-sfumato-verde td { background-color: #F0FDF4 !important; color: #276749; }
-        .row-sfumato-allerta td { background-color: #FFEDD5 !important; color: #9A3412; }
-        .row-sfumato-scaduto td { background-color: #9B2C2C !important; color: #FFFFFF !important; }
-        .row-sfumato-archiviato td { background-color: #F8FAFC !important; color: #4A5568; }
+        /* --- COLORI RIGHE (Desktop) --- */
+        .row-sfumato-verde td { background-color: #F0FDF4; }
+        .row-sfumato-allerta td { background-color: #FFEDD5; }
+        .row-sfumato-scaduto td { background-color: #9B2C2C; color: white !important; }
+        .row-sfumato-archiviato td { background-color: #F8FAFC; color: #718096 !important; }
 
-        /* --- 📝 TIPOGRAFIA DI STATO CON NO-WRAP --- */
-        .status-testo { display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
         .testo-verde { color: #276749; }
         .testo-allerta { color: #9A3412; }
         .testo-scaduto { color: #FFFFFF; }
         .testo-archiviato { color: #718096; }
 
-        /* --- 🌟 PULSANTI AZIONE UNIFORMI --- */
-        .btn-azione-riga { height: 38px; border: none; padding: 0 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; margin-left: 6px; }
-        
+        /* --- PULSANTI AZIONE --- */
+        .btn-azione-riga { height: 42px; border: none; padding: 0 18px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-left: 8px; }
         .btn-azione-apri { background-color: #EBF8FF; color: #2B6CB0; }
-        .btn-azione-apri:hover { background-color: #2B6CB0; color: #FFFFFF; transform: scale(1.03); }
-        
         .btn-azione-rinnova { background-color: #E6FFFA; color: #2F855A; }
-        .btn-azione-rinnova:hover { background-color: #2F855A; color: #FFFFFF; transform: scale(1.03); }
-        
         .btn-azione-archivia { background-color: #EDF2F7; color: #4A5568; }
-        .btn-azione-archivia:hover { background-color: #718096; color: #FFFFFF; transform: scale(1.03); }
-
         .btn-azione-ripristina { background-color: #E2E8F0; color: #4A5568; }
-        .btn-azione-ripristina:hover { background-color: #4A5568; color: #FFFFFF; transform: scale(1.03); }
-
         .btn-azione-rimuovi { background-color: #FED7D7; color: #C53030; }
-        .btn-azione-rimuovi:hover { background-color: #C53030; color: #FFFFFF; transform: scale(1.03); }
+        .btn-azione-nulla { background-color: transparent; color: #A0AEC0; border: 1px dashed #CBD5E0; cursor: not-allowed; }
 
-        .btn-azione-nulla { background-color: transparent; color: #A0AEC0; cursor: not-allowed; border: 1px dashed #CBD5E0; }
+        .row-sfumato-scaduto .btn-azione-riga:not(.btn-azione-nulla) { background-color: rgba(255, 255, 255, 0.2); color: #FFFFFF; }
+        .row-sfumato-scaduto .btn-azione-nulla { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.6); }
 
-        .row-sfumato-scaduto .btn-azione-riga:not(.btn-azione-nulla) { background-color: rgba(255, 255, 255, 0.15); color: #FFFFFF; }
-        .row-sfumato-scaduto .btn-azione-riga:not(.btn-azione-nulla):hover { background-color: rgba(255, 255, 255, 0.35); transform: scale(1.03); }
-        .row-sfumato-scaduto .btn-azione-nulla { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.5); }
+        .tabella-vuota { padding: 60px 20px; text-align: center; color: var(--grigio-luce); font-weight: 600; background: var(--bianco); border-radius: 20px; border: 2px dashed #E2E8F0; }
 
-        .tabella-vuota { padding: 50px; text-align: center; color: var(--grigio-luce); font-style: italic; }
-
-        /* --- MODALI --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 1000; padding: 15px; }
+        /* --- MODALI (Desktop Standard) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 1000; padding: 20px; backdrop-filter: blur(4px); }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-box { background-color: var(--bianco); padding: 30px; border-radius: 20px; width: 100%; max-width: 490px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); transform: translateY(-20px); transition: transform 0.25s ease; }
-        .modal-overlay.active .modal-box { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--sfondo); padding-bottom: 14px; }
-        .modal-header h2 { color: var(--blu-navy); font-size: 1.4rem; font-weight: 700; }
-        .btn-chiudi-modal { background: none; border: none; font-size: 1.6rem; color: var(--grigio-luce); cursor: pointer; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: var(--blu-navy); font-weight: 600; font-size: 0.9rem; }
-        .form-group input[type="text"], .form-group input[type="password"], .form-group input[type="date"], .form-group select { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-        .form-group input:focus, .form-group select:focus { border-color: var(--azzurro); }
+        .modal-box { background-color: var(--bianco); padding: 35px; border-radius: 28px; width: 100%; max-width: 500px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); transform: translateY(30px) scale(0.95); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
         
-        .chk-permesso-riga { margin-bottom:12px; display:flex; align-items:center; gap:10px; background-color:#F8FAFC; padding:10px 15px; border-radius:8px; border:1px solid #E2E8F0; }
-        .chk-permesso-riga input { width:auto; transform:scale(1.2); cursor:pointer; }
-        .chk-permesso-riga label { margin:0; cursor:pointer; font-weight:600; color:var(--blu-navy); flex-grow: 1; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .modal-header h2 { color: var(--blu-navy); font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .btn-chiudi-modal { background: #EDF2F7; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; color: var(--grigio-testo); cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; margin-bottom: 10px; color: var(--blu-navy); font-weight: 700; font-size: 0.95rem; }
+        .form-group input[type="text"], .form-group input[type="password"], .form-group input[type="date"], .form-group select { width: 100%; padding: 15px; border: 2px solid #E2E8F0; border-radius: 14px; font-size: 1rem; outline: none; background: #F8FAFC; color: #2D3748; transition: all 0.2s; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--azzurro); background: var(--bianco); box-shadow: 0 0 0 4px rgba(0, 119, 200, 0.1); }
+        
+        .chk-permesso-riga { margin-bottom:12px; display:flex; align-items:center; gap:12px; background-color:#F8FAFC; padding:15px; border-radius:14px; border:1px solid #E2E8F0; }
+        .chk-permesso-riga input { width:20px; height: 20px; cursor:pointer; accent-color: var(--azzurro); }
+        .chk-permesso-riga label { margin:0; cursor:pointer; font-weight:600; color:var(--blu-navy); flex-grow: 1; font-size: 1rem; }
 
-        .file-upload-wrapper { position: relative; border: 2px dashed var(--grigio-luce); border-radius: 10px; padding: 26px; text-align: center; background-color: var(--sfondo); cursor: pointer; transition: border-color 0.2s; }
-        .file-upload-wrapper:hover { border-color: var(--azzurro); }
-        .file-upload-wrapper i { font-size: 2rem; color: var(--azzurro); margin-bottom: 10px; }
-        .file-upload-wrapper p { font-size: 0.85rem; color: var(--blu-navy); font-weight: 500; }
+        .file-upload-wrapper { position: relative; border: 2px dashed #CBD5E0; border-radius: 16px; padding: 35px 20px; text-align: center; background-color: #F8FAFC; cursor: pointer; transition: all 0.2s; }
+        .file-upload-wrapper:hover { border-color: var(--azzurro); background-color: #EBF8FF; }
+        .file-upload-wrapper i { font-size: 2.5rem; color: var(--azzurro); margin-bottom: 12px; }
+        .file-upload-wrapper p { font-size: 0.95rem; color: var(--grigio-testo); font-weight: 600; }
         .file-upload-wrapper input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .nome-file-selezionato { margin-top: 8px; font-size: 0.85rem; color: #38A169; font-weight: bold; word-break: break-all; }
-        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
-        .btn-annulla { background-color: transparent; border: 2px solid var(--grigio-luce); color: var(--grigio-luce); padding: 10px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .btn-salva { background-color: #38A169; color: var(--bianco); border: none; padding: 10px 22px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .nome-file-selezionato { margin-top: 12px; font-size: 0.95rem; color: #38A169; font-weight: 800; word-break: break-all; text-align: center; background: #F0FDF4; padding: 10px; border-radius: 10px; }
+        
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 35px; }
+        .btn-annulla { background-color: #EDF2F7; color: var(--grigio-testo); border: none; padding: 14px 24px; border-radius: 14px; font-weight: 700; cursor: pointer; font-size: 1rem; flex: 1; text-align: center; }
+        .btn-salva { background-color: #38A169; color: var(--bianco); border: none; padding: 14px 24px; border-radius: 14px; font-weight: 700; cursor: pointer; font-size: 1rem; flex: 2; text-align: center; box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3); }
 
-        @media(max-width: 650px) {
-            .header h1 { font-size: 1.9rem; }
-            .header-sezione { flex-direction: column; gap: 14px; align-items: flex-start; padding: 18px; }
-            .btn-azione-principale { width: 100%; justify-content: center; }
-            .tabella-documenti th:nth-child(3), .tabella-documenti td:nth-child(3) { display: none; }
-            .tabella-documenti th, .tabella-documenti td { padding: 10px 12px; font-size: 0.9rem; }
-            .archivio-grid { gap: 30px; }
-            .btn-azione-riga { width: 100%; justify-content: center; margin-left: 0; margin-top: 5px; }
-            .btn-admin { right: 10px; top: 40px; }
+        /* ==================================================== */
+        /* 📱 MEDIA QUERIES MOBILE (Magia UI per Smartphone) */
+        /* ==================================================== */
+        @media(max-width: 768px) {
+            body { padding: 15px 10px 40px; }
+            .header h1 { font-size: 1.8rem; flex-direction: column; gap: 5px; }
+            .header h1 i { font-size: 2.2rem; margin-bottom: 5px; }
+            
+            .nav-viste { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
+            .tab-button { flex: 0 0 auto; min-width: 160px; }
+
+            .archivio-grid { grid-template-columns: 1fr; gap: 20px; }
+            .busta { padding: 30px 20px; flex-direction: row; flex-wrap: wrap; text-align: left; justify-content: space-between; align-items: center; border-radius: 20px; }
+            .busta i.icona-cartella { font-size: 2.5rem; margin: 0 15px 0 0; }
+            .busta h3 { margin: 0; width: calc(100% - 70px); font-size: 1.3rem; }
+            .badge-documenti { width: 100%; margin: 15px 0 10px 0; text-align: center; }
+            .busta .status-testo { width: 100%; justify-content: center; }
+            .btn-elimina-sezione { top: 50%; right: 15px; transform: translateY(-50%); }
+
+            /* Trasformazione Tabella in Card per Mobile */
+            .tabella-documenti, .tabella-documenti tbody, .tabella-documenti tr, .tabella-documenti td { display: block; width: 100%; box-sizing: border-box; }
+            .tabella-documenti thead { display: none; }
+            .tabella-documenti tr { margin-bottom: 20px; border-radius: 20px; padding: 20px; background: var(--bianco); box-shadow: 0 10px 25px rgba(27, 54, 93, 0.08); position: relative; border: 1px solid rgba(0,0,0,0.03); overflow: hidden; }
+            
+            /* Spostiamo i colori di stato dalla TD alla TR intera per le Card */
+            .row-sfumato-verde td, .row-sfumato-allerta td, .row-sfumato-scaduto td, .row-sfumato-archiviato td { background-color: transparent !important; color: inherit; }
+            .row-sfumato-verde { background-color: #F0FDF4 !important; border-color: #C6F6D5 !important; }
+            .row-sfumato-allerta { background-color: #FFEDD5 !important; border-color: #FBD38D !important; }
+            .row-sfumato-scaduto { background-color: #9B2C2C !important; color: white !important; }
+            .row-sfumato-scaduto td { color: white !important; }
+            .row-sfumato-archiviato { background-color: #F8FAFC !important; border-color: #E2E8F0 !important; }
+
+            .tabella-documenti td { padding: 6px 0; text-align: left !important; border-radius: 0 !important; }
+            .tabella-documenti td:first-child { font-size: 1.2rem; font-weight: 800; padding-bottom: 10px; }
+            
+            /* Riga Bottoni in fondo alla Card */
+            .tabella-documenti td:last-child { display: flex; flex-wrap: wrap; gap: 10px; justify-content: stretch; margin-top: 15px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.08); }
+            .row-sfumato-scaduto td:last-child { border-top-color: rgba(255,255,255,0.2); }
+            
+            .btn-azione-riga { flex: 1; min-width: calc(50% - 10px); margin: 0; padding: 12px 0; height: auto; }
+            .btn-azione-apri { min-width: 100%; } /* Il tasto Apri è sempre grande quanto tutta la riga */
+
+            /* Bottom Sheet Modals (Modali a comparsa dal basso) */
+            .modal-overlay { align-items: flex-end; padding: 0; }
+            .modal-box { transform: translateY(100%); border-radius: 30px 30px 0 0; padding: 30px 25px 45px; margin: 0; max-width: 100%; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+            .modal-overlay.active .modal-box { transform: translateY(0); }
+            
+            /* Elemento visivo (maniglietta) tipico delle bottom sheet */
+            .modal-box::before { content: ''; display: block; width: 50px; height: 5px; background: #CBD5E0; border-radius: 10px; margin: -10px auto 25px auto; }
+            .modal-header h2 { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="header">
+        <div class="top-app-bar">
             <button class="btn-admin" id="botton-admin" onclick="apriGestioneUtenti()"><i class="fa-solid fa-users-gear"></i> Permessi</button>
+            <div style="flex-grow: 1;"></div>
             <button class="btn-logout" id="botton-logout" onclick="eseguiLogout()"><i class="fa-solid fa-right-from-bracket"></i> Esci</button>
+        </div>
+
+        <div class="header">
             <h1><i class="fa-solid fa-anchor"></i> Marina Porto Antico</h1>
             <p>Scadenziario Ufficiale Documenti & Certificazioni</p>
         </div>
@@ -240,8 +263,8 @@
 
             <div class="search-bar-container">
                 <i class="fa-solid fa-search"></i>
-                <input type="text" id="input-ricerca" placeholder="Cerca un file o una scadenza per nome..." onkeyup="gestisciRicerca()">
-                <button class="btn-clear-search" onclick="pulisciRicerca(true)" id="btn-clear-search" style="display:none;"><i class="fa-solid fa-times"></i></button>
+                <input type="text" id="input-ricerca" placeholder="Cerca file o scadenza..." onkeyup="gestisciRicerca()">
+                <button class="btn-clear-search" onclick="pulisciRicerca(true)" id="btn-clear-search" style="display:none;"><i class="fa-solid fa-times-circle"></i></button>
             </div>
 
             <div id="view-archivio">
@@ -250,27 +273,28 @@
 
             <div id="view-sezione" class="view-sezione">
                 <div onclick="mostraArchivio()" class="btn-indietro">
-                    <i class="fa-solid fa-arrow-left"></i> Torna all'Archivio Principale
+                    <i class="fa-solid fa-arrow-left"></i> Archivi Principali
                 </div>
                 <div class="header-sezione" id="header-dinamico-sezione">
                     <h2 id="titolo-sezione">Caricamento...</h2>
                     <button class="btn-azione-principale" id="btn-crea-scadenza-in-sezione" onclick="apriModalDocumento(null)">
-                        <i class="fa-solid fa-calendar-plus"></i> Imposta Nuova Scadenza
+                        <i class="fa-solid fa-calendar-plus"></i> Nuova Scadenza
                     </button>
                 </div>
                 <div class="tabella-wrapper">
                     <table class="tabella-documenti">
                         <thead>
                             <tr>
-                                <th>Nome Scadenza / Documento</th>
+                                <th>Nome Documento</th>
                                 <th>Data Limite</th>
-                                <th>Stato Allerta</th>
-                                <th style="text-align: right; padding-right: 24px;">Azioni Gestionale</th>
+                                <th>Stato</th>
+                                <th style="text-align: right; padding-right: 24px;">Azioni</th>
                             </tr>
                         </thead>
                         <tbody id="lista-documenti"></tbody>
                     </table>
                     <div id="tabella-vuota-messaggio" class="tabella-vuota" style="display: none;">
+                        <i class="fa-regular fa-folder-open" style="font-size:2rem; margin-bottom:10px; color:#A0AEC0;"></i><br>
                         Nessun elemento attivo trovato.
                     </div>
                 </div>
@@ -284,10 +308,10 @@
                     <table class="tabella-documenti">
                         <thead>
                             <tr>
-                                <th>Nome Scadenza / Cartella</th>
+                                <th>Nome Documento</th>
                                 <th>Data Limite</th>
-                                <th>Stato Allerta</th>
-                                <th style="text-align: right; padding-right: 24px;">Azioni Gestionale</th>
+                                <th>Stato</th>
+                                <th style="text-align: right; padding-right: 24px;">Azioni</th>
                             </tr>
                         </thead>
                         <tbody id="lista-documenti-ricerca"></tbody>
@@ -304,13 +328,13 @@
     <div class="modal-overlay" id="modal-sezione">
         <div class="modal-box">
             <div class="modal-header">
-                <h2 id="titolo-modal-sezione"><i class="fa-solid fa-folder-plus"></i> Nuova Cartella Archivio</h2>
-                <button class="btn-chiudi-modal" onclick="chiudiModalSezione()">&times;</button>
+                <h2 id="titolo-modal-sezione"><i class="fa-solid fa-folder-plus"></i> Nuova Cartella</h2>
+                <button class="btn-chiudi-modal" onclick="chiudiModalSezione()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="form-nuova-sezione" onsubmit="salvaNuovaSezione(event)">
                 <div class="form-group">
                     <label for="input-nome-sezione">Nome della Cartella</label>
-                    <input type="text" id="input-nome-sezione" placeholder="es. Demanio, Sicurezza, Personale" required>
+                    <input type="text" id="input-nome-sezione" placeholder="es. Demanio, Sicurezza..." required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-annulla" onclick="chiudiModalSezione()">Annulla</button>
@@ -324,19 +348,25 @@
         <div class="modal-box">
             <div class="modal-header">
                 <h2 id="titolo-modal-documento"><i class="fa-solid fa-file-circle-plus"></i> Inserisci Scadenza</h2>
-                <button class="btn-chiudi-modal" onclick="chiudiModalDocumento()">&times;</button>
+                <button class="btn-chiudi-modal" onclick="chiudiModalDocumento()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="form-nuovo-documento" onsubmit="salvaNuovoDocumento(event)">
+                <div class="form-group" id="group-seleziona-cartella" style="display: none;">
+                    <label for="doc-sezione-id">Cartella di Destinazione</label>
+                    <select id="doc-sezione-id">
+                        <option value="">-- Scegli Cartella --</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="doc-nome">Nome Elemento / Certificato</label>
-                    <input type="text" id="doc-nome" placeholder="es. Documento" required>
+                    <input type="text" id="doc-nome" placeholder="Es. Estintori Molo B" required>
                 </div>
                 <div class="form-group">
                     <label for="doc-scadenza">Data di Scadenza</label>
                     <input type="date" id="doc-scadenza" required>
                 </div>
                 <div class="form-group">
-                    <label for="doc-preavviso">Periodo di Preavviso (Attivazione Variazione Colore)</label>
+                    <label for="doc-preavviso">Allerta Preavviso</label>
                     <select id="doc-preavviso">
                         <option value="7_mesi">7 Mesi prima</option>
                         <option value="4_mesi" selected>4 Mesi prima</option>
@@ -345,13 +375,13 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>File Associato o Foto (Opzionale)</label>
+                    <label>File (PDF/Foto) Opzionale</label>
                     <div class="file-upload-wrapper">
-                        <i class="fa-solid fa-camera-retro"></i>
-                        <p>Tocca per scattare una foto o caricare un file (Lascia vuoto se non serve)</p>
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>Tocca per caricare un file<br><span style="font-size:0.8rem; font-weight:normal;">(O scatta una foto da cellulare)</span></p>
                         <input type="file" id="doc-file" accept=".pdf,image/*" onchange="aggiornaNomeFile(this)">
                     </div>
-                    <div id="file-selezionato-feedback" class="nome-file-selezionato"></div>
+                    <div id="file-selezionato-feedback" class="nome-file-selezionato" style="display:none;"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-annulla" onclick="chiudiModalDocumento()">Annulla</button>
@@ -365,22 +395,22 @@
         <div class="modal-box">
             <div class="modal-header">
                 <h2><i class="fa-solid fa-users-gear"></i> Permessi Operatori</h2>
-                <button class="btn-chiudi-modal" onclick="chiudiGestioneUtenti()">&times;</button>
+                <button class="btn-chiudi-modal" onclick="chiudiGestioneUtenti()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="form-group">
-                <label>Seleziona l'Operatore (Dipendente)</label>
+                <label>Seleziona l'Operatore</label>
                 <select id="select-operatore" onchange="caricaPermessiOperatore(this.value)">
                     <option value="">-- Scegli account --</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Cartelle Condivise Visibili</label>
-                <div id="lista-checkbox-cartelle" style="max-height: 250px; overflow-y: auto;">
-                    </div>
+                <div id="lista-checkbox-cartelle" style="max-height: 250px; overflow-y: auto; padding-right:10px;">
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-annulla" onclick="chiudiGestioneUtenti()">Chiudi</button>
-                <button class="btn-salva" onclick="salvaPermessiOperatore()"><i class="fa-solid fa-floppy-disk"></i> Aggiorna</button>
+                <button class="btn-salva" onclick="salvaPermessiOperatore()"><i class="fa-solid fa-floppy-disk"></i> Salva</button>
             </div>
         </div>
     </div>
@@ -402,14 +432,22 @@
         let vistaAttuale = 'porto'; 
         let currentUserId = null;
         let currentUserRole = 'operatore';
+        let sharedFileBlob = null; 
 
         window.onload = function() {
+            // PWA Registration with relative path for GitHub pages compatability
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/scadenziario/sw.js')
+                    .then(reg => console.log('PWA Service Worker registrato correttamente.'))
+                    .catch(err => console.error('Errore registrazione Service Worker PWA:', err));
+            }
+
             supabaseClient.auth.onAuthStateChange((event, session) => {
                 if (session) {
                     currentUserId = session.user.id;
                     document.getElementById('view-login').style.display = 'none';
                     document.getElementById('contenuto-principale-app').style.display = 'block';
-                    document.getElementById('botton-logout').style.display = 'block';
+                    document.getElementById('botton-logout').style.display = 'inline-flex';
                     caricaDatiDalCloud();
                 } else {
                     currentUserId = null;
@@ -519,49 +557,12 @@
             });
 
             docFiltrati.forEach(doc => {
-                const tr = document.createElement('tr');
-                const stato = calcolaStatoDocumento(doc);
-                tr.className = stato.classeRiga;
-
-                const sez = sezioni.find(s => s.id === doc.sezione_id);
-                const nomeSezione = sez ? sez.nome : 'Sconosciuta';
-
-                let iconaSpillaAllegato = '';
-                let pulsanteConsultazione = '';
-                
-                if (doc.file_path) {
-                    iconaSpillaAllegato = `<i class="fa-solid fa-paperclip" style="opacity: 0.7; font-size:0.9rem; margin-right:8px;"></i>`;
-                    pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-apri" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i> Apri</button>`;
-                } else {
-                    pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-nulla" disabled><i class="fa-solid fa-eye-slash"></i> No File</button>`;
-                }
-
-                let bottoniAzione = doc.archiviato ? 
-                    `${pulsanteConsultazione}
-                    <button class="btn-azione-riga btn-azione-ripristina" onclick="ripristinaDocumento('${doc.id}')"><i class="fa-solid fa-arrow-rotate-left"></i></button>
-                    <button class="btn-azione-riga btn-azione-rimuovi" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash-can"></i></button>` : 
-                    `${pulsanteConsultazione}
-                    <button class="btn-azione-riga btn-azione-rinnova" onclick="apriModalDocumento('${doc.id}')"><i class="fa-solid fa-rotate"></i></button>
-                    <button class="btn-azione-riga btn-azione-archivia" onclick="archiviaDocumento('${doc.id}')"><i class="fa-solid fa-box-archive"></i></button>`;
-
-                const dataFormattata = new Date(doc.data_scadenza).toLocaleDateString('it-IT', { year: 'numeric', month: 'short', day: 'numeric' });
-
-                tr.innerHTML = `
-                    <td>
-                        <div style="font-size:0.75rem; color:var(--grigio-luce); text-transform:uppercase; margin-bottom:4px; font-weight:700;"><i class="fa-regular fa-folder-open"></i> ${nomeSezione}</div>
-                        ${iconaSpillaAllegato}<strong>${doc.nome}</strong>
-                    </td>
-                    <td><i class="fa-regular fa-calendar-days" style="margin-right:6px; opacity:0.6;"></i>${dataFormattata}</td>
-                    <td><span class="status-testo ${stato.classeTesto}"><i class="fa-solid ${stato.icona}"></i> ${stato.testo}</span></td>
-                    <td style="text-align: right; white-space: nowrap;">${bottoniAzione}</td>
-                `;
-                tbody.appendChild(tr);
+                costruisciRigaTabella(doc, tbody);
             });
         }
 
         async function caricaDatiDalCloud() {
             try {
-                // 1. CARICAMENTO RUOLO E PERMESSI
                 let { data: prof } = await supabaseClient.from('profili').select('ruolo').eq('id', currentUserId).single();
                 if (prof) currentUserRole = prof.ruolo;
 
@@ -575,7 +576,6 @@
                     userPermissions = perms ? perms.map(p => p.sezione_id) : [];
                 }
 
-                // 2. CARICAMENTO DATI
                 let { data: dataSez, error: errSez } = await supabaseClient.from('sezioni').select('*').order('nome');
                 if (errSez) throw errSez;
                 sezioni = dataSez || [];
@@ -589,7 +589,38 @@
                 else if (currentSezioneId) renderDocumenti(); 
                 else renderSezioni();
 
+                await controllaFileCondiviso();
+
             } catch (error) { alert("Errore Cloud:\n" + error.message); }
+        }
+
+        async function controllaFileCondiviso() {
+            if (!('caches' in window)) return;
+            try {
+                const cache = await caches.open('file-condivisi-temporanei');
+                const response = await cache.match('/file-in-arrivo');
+                
+                if (response) {
+                    const blob = await response.blob();
+                    const encodedName = response.headers.get('x-file-name') || 'file_mobile.jpg';
+                    const fileName = decodeURIComponent(encodedName);
+                    const fileType = response.headers.get('x-file-type') || blob.type;
+
+                    sharedFileBlob = new File([blob], fileName, { type: fileType });
+                    await cache.delete('/file-in-arrivo');
+                    window.history.replaceState({}, document.title, window.location.pathname);
+
+                    apriModalDocumento(null);
+                    
+                    const feedbackBox = document.getElementById('file-selezionato-feedback');
+                    feedbackBox.innerText = "📥 File condiviso agganciato: " + fileName;
+                    feedbackBox.style.display = 'block';
+                    
+                    document.getElementById('doc-nome').value = fileName.split('.').slice(0, -1).join('.');
+                }
+            } catch (err) {
+                console.error("Errore estrazione file condiviso:", err);
+            }
         }
 
         function mostraArchivio() {
@@ -610,9 +641,8 @@
                 if(btnNuovo) btnNuovo.style.display = 'none'; 
             } else {
                 const sez = sezioni.find(s => s.id === sezioneId);
-                document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome} ${sez.privato ? '<span style="font-size:1rem; vertical-align:middle; color:var(--grigio-luce);"><i class="fa-solid fa-lock"></i> Riservata</span>' : ''}`;
+                document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome} ${sez.privato ? '<span style="font-size:0.9rem; vertical-align:middle; color:var(--grigio-luce);"><i class="fa-solid fa-lock"></i> Area Riservata</span>' : ''}`;
                 
-                // Se sei operatore nella vista condivisa, non puoi creare documenti
                 if (currentUserRole === 'operatore' && vistaAttuale === 'porto') {
                     if(btnNuovo) btnNuovo.style.display = 'none';
                 } else {
@@ -634,7 +664,7 @@
                 if (vistaAttuale === 'porto') {
                     if (s.privato === true) return false;
                     if (currentUserRole === 'admin') return true;
-                    return userPermissions.includes(s.id); // L'operatore vede solo le cartelle autorizzate
+                    return userPermissions.includes(s.id);
                 } else {
                     return s.privato === true && s.user_id === currentUserId;
                 }
@@ -660,7 +690,6 @@
                     });
                 }
 
-                // Nascondiamo il tasto di cancellazione cartella agli operatori nella vista porto
                 let btnCestino = '';
                 if (currentUserRole === 'admin' || vistaAttuale === 'personale') {
                     btnCestino = `<button class="btn-elimina-sezione" title="Cancella Cartella" onclick="eliminaSezione(event, '${sez.id}')"><i class="fa-solid fa-trash-can"></i></button>`;
@@ -679,16 +708,14 @@
                 griglia.appendChild(div);
             });
 
-            // TASTO DIRETTIVO AGGIUNGI CARTELLA (nascosto agli operatori sulla vista porto)
             if (currentUserRole === 'admin' || vistaAttuale === 'personale') {
                 const btnAggiungi = document.createElement('div');
                 btnAggiungi.className = 'busta busta-aggiungi';
                 btnAggiungi.onclick = apriModalSezione;
-                btnAggiungi.innerHTML = `<i class="fa-solid fa-plus icona-cartella"></i><h3>Crea Cartella</h3>`;
+                btnAggiungi.innerHTML = `<i class="fa-solid fa-folder-plus icona-cartella"></i><h3>Crea Nuova</h3>`;
                 griglia.appendChild(btnAggiungi);
             }
 
-            // 📦 CARTELLA SPECIALE "ARCHIVIO STORICO" FISSA SOTTO
             const sezioniFiltrateIds = sezioniFiltrate.map(s => s.id);
             const contaArchiviati = documentoList.filter(d => d.archiviato && sezioniFiltrateIds.includes(d.sezione_id)).length;
             
@@ -740,51 +767,59 @@
             });
 
             docFiltrati.forEach(doc => {
-                const tr = document.createElement('tr');
-                const stato = calcolaStatoDocumento(doc);
-                tr.className = stato.classeRiga;
-
-                let iconaSpillaAllegato = '';
-                let pulsanteConsultazione = '';
-                
-                if (doc.file_path) {
-                    iconaSpillaAllegato = `<i class="fa-solid fa-paperclip" style="opacity: 0.7; font-size:0.9rem; margin-right:8px;"></i>`;
-                    pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-apri" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i> Apri File</button>`;
-                } else {
-                    pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-nulla" disabled><i class="fa-solid fa-eye-slash"></i> Senza File</button>`;
-                }
-
-                // Controllo poteri Operatore vs Admin su rinnovo/eliminazione
-                let puoAgire = (currentUserRole === 'admin' || vistaAttuale === 'personale');
-
-                let bottoniAzione = '';
-                if (doc.archiviato) {
-                    bottoniAzione = puoAgire ? `
-                        ${pulsanteConsultazione}
-                        <button class="btn-azione-riga btn-azione-ripristina" onclick="ripristinaDocumento('${doc.id}')"><i class="fa-solid fa-arrow-rotate-left"></i> Ripristina</button>
-                        <button class="btn-azione-riga btn-azione-rimuovi" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash-can"></i> Elimina</button>
-                    ` : `${pulsanteConsultazione}`;
-                } else {
-                    bottoniAzione = puoAgire ? `
-                        ${pulsanteConsultazione}
-                        <button class="btn-azione-riga btn-azione-rinnova" onclick="apriModalDocumento('${doc.id}')"><i class="fa-solid fa-rotate"></i> Rinnova</button>
-                        <button class="btn-azione-riga btn-azione-archivia" onclick="archiviaDocumento('${doc.id}')"><i class="fa-solid fa-box-archive"></i> Archivia</button>
-                    ` : `${pulsanteConsultazione}`;
-                }
-
-                const dataFormattata = new Date(doc.data_scadenza).toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
-
-                tr.innerHTML = `
-                    <td>${iconaSpillaAllegato}<strong>${doc.nome}</strong></td>
-                    <td><i class="fa-regular fa-calendar-days" style="margin-right:6px; opacity:0.6;"></i>${dataFormattata}</td>
-                    <td><span class="status-testo ${stato.classeTesto}"><i class="fa-solid ${stato.icona}"></i> ${stato.testo}</span></td>
-                    <td style="text-align: right; white-space: nowrap;">${bottoniAzione}</td>
-                `;
-                tbody.appendChild(tr);
+                costruisciRigaTabella(doc, tbody);
             });
         }
 
-        // --- FUNZIONI MODALI PANNELLO ADMIN PERMESSI ---
+        // Funzione centralizzata per renderizzare le righe/card
+        function costruisciRigaTabella(doc, containerElement) {
+            const tr = document.createElement('tr');
+            const stato = calcolaStatoDocumento(doc);
+            tr.className = stato.classeRiga;
+
+            const sez = sezioni.find(s => s.id === doc.sezione_id);
+            const nomeSezione = sez ? sez.nome : 'Sconosciuta';
+
+            let iconaSpillaAllegato = '';
+            let pulsanteConsultazione = '';
+            
+            if (doc.file_path) {
+                iconaSpillaAllegato = `<i class="fa-solid fa-paperclip" style="opacity: 0.7; font-size:1rem; margin-right:10px;"></i>`;
+                pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-apri" onclick="apriFileReale('${doc.file_path}')"><i class="fa-solid fa-file-pdf"></i> Apri File</button>`;
+            } else {
+                pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-nulla" disabled><i class="fa-solid fa-eye-slash"></i> Senza File</button>`;
+            }
+
+            let puoAgire = (currentUserRole === 'admin' || vistaAttuale === 'personale');
+
+            let bottoniAzione = '';
+            if (doc.archiviato) {
+                bottoniAzione = puoAgire ? `
+                    ${pulsanteConsultazione}
+                    <button class="btn-azione-riga btn-azione-ripristina" onclick="ripristinaDocumento('${doc.id}')"><i class="fa-solid fa-arrow-rotate-left"></i> Ripristina</button>
+                    <button class="btn-azione-riga btn-azione-rimuovi" onclick="eliminaDocumento('${doc.id}', '${doc.file_path}')"><i class="fa-solid fa-trash-can"></i> Elimina</button>
+                ` : `${pulsanteConsultazione}`;
+            } else {
+                bottoniAzione = puoAgire ? `
+                    ${pulsanteConsultazione}
+                    <button class="btn-azione-riga btn-azione-rinnova" onclick="apriModalDocumento('${doc.id}')"><i class="fa-solid fa-rotate"></i> Rinnova</button>
+                    <button class="btn-azione-riga btn-azione-archivia" onclick="archiviaDocumento('${doc.id}')"><i class="fa-solid fa-box-archive"></i> Archivia</button>
+                ` : `${pulsanteConsultazione}`;
+            }
+
+            const dataFormattata = new Date(doc.data_scadenza).toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
+            const labelCartella = containerElement.id === 'lista-documenti-ricerca' ? `<div style="font-size:0.75rem; color:var(--grigio-luce); text-transform:uppercase; margin-bottom:8px; font-weight:700;"><i class="fa-regular fa-folder-open"></i> ${nomeSezione}</div>` : '';
+
+            tr.innerHTML = `
+                <td>${labelCartella}${iconaSpillaAllegato}<span>${doc.nome}</span></td>
+                <td><i class="fa-regular fa-calendar-days" style="margin-right:8px; opacity:0.6;"></i>${dataFormattata}</td>
+                <td><span class="status-testo ${stato.classeTesto}"><i class="fa-solid ${stato.icona}"></i> ${stato.testo}</span></td>
+                <td style="text-align: right;">${bottoniAzione}</td>
+            `;
+            containerElement.appendChild(tr);
+        }
+
+        // --- AMMINISTRAZIONE PERMESSI ---
         function apriGestioneUtenti() {
             const select = document.getElementById('select-operatore');
             select.innerHTML = '<option value="">-- Seleziona account --</option>';
@@ -808,7 +843,7 @@
 
         async function caricaPermessiOperatore(operatoreId) {
             const container = document.getElementById('lista-checkbox-cartelle');
-            container.innerHTML = '<span style="color:var(--grigio-luce);"><i class="fa-solid fa-spinner fa-spin"></i> Caricamento...</span>';
+            container.innerHTML = '<span style="color:var(--grigio-luce); padding:10px; display:block;"><i class="fa-solid fa-spinner fa-spin"></i> Caricamento...</span>';
             if(!operatoreId) { container.innerHTML = ''; return; }
 
             const { data: perms } = await supabaseClient.from('permessi_cartelle').select('sezione_id').eq('user_id', operatoreId);
@@ -818,7 +853,7 @@
             container.innerHTML = '';
             
             if (cartelleCondivise.length === 0) {
-                container.innerHTML = '<span style="color:var(--grigio-luce);">Nessuna cartella condivisa creata nel porto.</span>';
+                container.innerHTML = '<span style="color:var(--grigio-luce); display:block; padding:10px;">Nessuna cartella condivisa creata nel porto.</span>';
                 return;
             }
 
@@ -827,7 +862,7 @@
                 container.innerHTML += `
                     <div class="chk-permesso-riga">
                         <input type="checkbox" id="chk-${c.id}" value="${c.id}" class="chk-permesso" ${checked}>
-                        <label for="chk-${c.id}"><i class="fa-solid fa-folder-open" style="color:var(--azzurro); margin-right:6px;"></i> ${c.nome}</label>
+                        <label for="chk-${c.id}"><i class="fa-solid fa-folder-open" style="color:var(--azzurro); margin-right:8px;"></i> ${c.nome}</label>
                     </div>
                 `;
             });
@@ -835,7 +870,7 @@
 
         async function salvaPermessiOperatore() {
             const operatoreId = document.getElementById('select-operatore').value;
-            if(!operatoreId) return alert("Devi selezionare un dipendente/operatore dal menu.");
+            if(!operatoreId) return alert("Seleziona un dipendente/operatore dal menu.");
 
             const checkboxes = document.querySelectorAll('.chk-permesso');
             const nuoveSezioni = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
@@ -851,7 +886,7 @@
             chiudiGestioneUtenti();
         }
 
-        // --- FUNZIONI CARICAMENTO E SALVATAGGIO CLOUD ---
+        // --- FUNZIONI MODALI ---
         function apriModalSezione() {
             document.getElementById('titolo-modal-sezione').innerHTML = vistaAttuale === 'personale' ? `<i class="fa-solid fa-lock"></i> Nuova Cartella Riservata` : `<i class="fa-solid fa-folder-plus"></i> Nuova Cartella`;
             document.getElementById('modal-sezione').classList.add('active'); 
@@ -865,13 +900,38 @@
         function apriModalDocumento(idDocDaRinnovare = null) {
             idDocumentoDaRinnovare = idDocDaRinnovare;
             const titolo = document.getElementById('titolo-modal-documento');
+            const groupSezione = document.getElementById('group-seleziona-cartella');
+            const selectSezione = document.getElementById('doc-sezione-id');
             
+            if (!currentSezioneId && !idDocumentoDaRinnovare) {
+                groupSezione.style.display = 'block';
+                selectSezione.required = true;
+                selectSezione.innerHTML = '<option value="">-- Scegli Cartella di Destinazione --</option>';
+
+                const cartelleDisponibili = sezioni.filter(s => {
+                    if (vistaAttuale === 'porto') {
+                        if (s.privato === true) return false;
+                        if (currentUserRole === 'admin') return true;
+                        return userPermissions.includes(s.id);
+                    } else {
+                        return s.privato === true && s.user_id === currentUserId;
+                    }
+                });
+
+                cartelleDisponibili.forEach(s => {
+                    selectSezione.innerHTML += `<option value="${s.id}">${s.nome}</option>`;
+                });
+            } else {
+                groupSezione.style.display = 'none';
+                selectSezione.required = false;
+            }
+
             if (idDocumentoDaRinnovare) {
-                titolo.innerHTML = `<i class="fa-solid fa-rotate"></i> Aggiorna e Archivia Vecchia Scadenza`;
+                titolo.innerHTML = `<i class="fa-solid fa-rotate"></i> Rinnova Scadenza`;
                 const vecchioDoc = documentoList.find(d => d.id === idDocumentoDaRinnovare);
                 if (vecchioDoc) document.getElementById('doc-nome').value = vecchioDoc.nome;
             } else {
-                titolo.innerHTML = `<i class="fa-solid fa-file-circle-plus"></i> Imposta Nuova Scadenza`;
+                titolo.innerHTML = `<i class="fa-solid fa-file-circle-plus"></i> Inserisci Scadenza`;
             }
             document.getElementById('modal-documento').classList.add('active');
         }
@@ -879,16 +939,27 @@
         function chiudiModalDocumento() {
             document.getElementById('modal-documento').classList.remove('active');
             document.getElementById('form-nuovo-documento').reset();
-            document.getElementById('file-selezionato-feedback').innerText = '';
+            
+            const feedbackBox = document.getElementById('file-selezionato-feedback');
+            feedbackBox.innerText = '';
+            feedbackBox.style.display = 'none';
+            
             idDocumentoDaRinnovare = null;
+            sharedFileBlob = null;
         }
 
         function aggiornaNomeFile(input) {
-            const feedback = document.getElementById('file-selezionato-feedback');
-            if(input.files && input.files.length > 0) feedback.innerText = "📸 File pronto: " + input.files[0].name;
-            else feedback.innerText = "";
+            const feedbackBox = document.getElementById('file-selezionato-feedback');
+            if(input.files && input.files.length > 0) {
+                feedbackBox.innerText = "📸 File pronto: " + input.files[0].name;
+                feedbackBox.style.display = 'block';
+            } else {
+                feedbackBox.innerText = "";
+                feedbackBox.style.display = 'none';
+            }
         }
 
+        // --- INTEGRAZIONI SUPABASE ---
         async function eseguiLogin(event) {
             event.preventDefault();
             const email = document.getElementById('login-email').value;
@@ -897,7 +968,7 @@
             if (error) alert("❌ Errore Accesso:\n" + error.message);
         }
 
-        async function eseguiLogout() { if(confirm("Disconnettersi?")) await supabaseClient.auth.signOut(); }
+        async function eseguiLogout() { if(confirm("Confermi di voler uscire?")) await supabaseClient.auth.signOut(); }
 
         async function salvaNuovaSezione(event) {
             event.preventDefault();
@@ -915,11 +986,25 @@
             const fileInput = document.getElementById('doc-file');
             let percorsoFile = null;
 
+            let destinazioneSezioneId = currentSezioneId;
+            if (!destinazioneSezioneId) {
+                destinazioneSezioneId = document.getElementById('doc-sezione-id').value;
+                if (!destinazioneSezioneId) { alert("Scegli una cartella di destinazione."); return; }
+            }
+
+            let fileEffettivo = null;
             if (fileInput.files && fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                percorsoFile = `${currentSezioneId}/${Date.now()}.${file.name.split('.').pop()}`;
-                const { error: errUpload } = await supabaseClient.storage.from('file_documenti').upload(percorsoFile, file);
-                if (errUpload) { alert("Errore File: " + errUpload.message); return; }
+                fileEffettivo = fileInput.files[0];
+            } else if (sharedFileBlob) {
+                fileEffettivo = sharedFileBlob;
+            }
+
+            if (fileEffettivo) {
+                const estensione = fileEffettivo.name ? fileEffettivo.name.split('.').pop() : 'jpg';
+                percorsoFile = `${destinazioneSezioneId}/${Date.now()}.${estensione}`;
+                
+                const { error: errUpload } = await supabaseClient.storage.from('file_documenti').upload(percorsoFile, fileEffettivo);
+                if (errUpload) { alert("Errore Cloud: " + errUpload.message); return; }
             }
 
             if (idDocumentoDaRinnovare) {
@@ -927,20 +1012,20 @@
                 if (errArchive) { alert("Errore Storico: " + errArchive.message); return; }
             }
 
-            const { error: errInsert } = await supabaseClient.from('documenti').insert([{ sezione_id: currentSezioneId, nome: nome, data_scadenza: scadenza, file_path: percorsoFile, archiviato: false, preavviso: preavviso }]);
+            const { error: errInsert } = await supabaseClient.from('documenti').insert([{ sezione_id: destinazioneSezioneId, nome: nome, data_scadenza: scadenza, file_path: percorsoFile, archiviato: false, preavviso: preavviso }]);
             if (errInsert) alert("Errore Database: " + errInsert.message); else { chiudiModalDocumento(); await caricaDatiDalCloud(); }
         }
 
         async function eliminaSezione(event, idSezione) {
             event.stopPropagation();
-            if(confirm("Attenzione: Vuoi eliminare l'intera cartella e tutti i file contenuti?")) {
+            if(confirm("ATTENZIONE:\nSei sicuro di voler eliminare questa cartella e tutto il suo contenuto?")) {
                 const { error } = await supabaseClient.from('sezioni').delete().eq('id', idSezione);
                 if (error) alert(error.message); else await caricaDatiDalCloud();
             }
         }
 
         async function archiviaDocumento(idDoc) {
-            if(confirm("Vuoi spostare questa scadenza nell'Archivio Storico? Scomparirà da questa lista.")) {
+            if(confirm("Spostare la scadenza nello storico? Scomparirà dalla lista attiva.")) {
                 const { error } = await supabaseClient.from('documenti').update({ archiviato: true }).eq('id', idDoc);
                 if (error) { alert(error.message); return; }
                 await caricaDatiDalCloud();
@@ -948,7 +1033,7 @@
         }
 
         async function ripristinaDocumento(idDoc) {
-            if(confirm("Vuoi ripristinare questo file? Tornerà immediatamente nella sua cartella attiva.")) {
+            if(confirm("Ripristinare questo file nella cartella attiva?")) {
                 const { error } = await supabaseClient.from('documenti').update({ archiviato: false }).eq('id', idDoc);
                 if (error) { alert(error.message); return; }
                 await caricaDatiDalCloud();
@@ -956,10 +1041,13 @@
         }
 
         async function eliminaDocumento(idDoc, filePath) {
-            if(confirm("Attenzione: Azione irreversibile. Vuoi ELIMINARE definitivamente questo file dal server cloud?")) {
+            if(confirm("AZIONE IRREVERSIBILE.\nELIMINARE definitivamente questo file dai server cloud?")) {
                 const { error: errDb } = await supabaseClient.from('documenti').delete().eq('id', idDoc);
                 if (errDb) { alert(errDb.message); return; }
-                if (filePath && filePath !== 'null' && filePath !== 'undefined') await supabaseClient.storage.from('file_documenti').remove([filePath]);
+                
+                if (filePath && filePath !== 'null' && filePath !== 'undefined') {
+                    await supabaseClient.storage.from('file_documenti').remove([filePath]);
+                }
                 await caricaDatiDalCloud();
             }
         }
