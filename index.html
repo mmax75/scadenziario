@@ -34,6 +34,9 @@
         .btn-admin { background-color: #EBF8FF; color: #2B6CB0; border: 1px solid #BEE3F8; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: none; transition: all 0.2s; align-items: center; gap: 6px; }
         .btn-admin:hover { background-color: #2B6CB0; color: var(--bianco); }
 
+        .btn-password { background-color: #EDF2F7; color: #4A5568; border: 1px solid #E2E8F0; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: none; transition: all 0.2s; align-items: center; gap: 6px; }
+        .btn-password:hover { background-color: #4A5568; color: var(--bianco); }
+
         /* --- SCHERMATA LOGIN --- */
         .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
         .login-box { background-color: var(--bianco); padding: 40px 30px; border-radius: 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(27, 54, 93, 0.06); border: 1px solid rgba(27, 54, 93, 0.04); text-align: center; }
@@ -169,25 +172,30 @@
             .tab-button { flex: 0 0 auto; min-width: 160px; }
 
             .archivio-grid { grid-template-columns: 1fr; gap: 20px; }
-            .busta { padding: 30px 20px; flex-direction: row; flex-wrap: wrap; text-align: left; justify-content: space-between; align-items: center; border-radius: 20px; }
+            
+            /* Migliorata visibilità bordi e ombre delle Cartelle su Mobile */
+            .busta { padding: 30px 20px; flex-direction: row; flex-wrap: wrap; text-align: left; justify-content: space-between; align-items: center; border-radius: 20px; border: 1px solid #CBD5E0; box-shadow: 0 6px 18px rgba(27, 54, 93, 0.08); }
+            
             .busta i.icona-cartella { font-size: 2.5rem; margin: 0 15px 0 0; }
             .busta h3 { margin: 0; width: calc(100% - 70px); font-size: 1.3rem; }
             .badge-documenti { width: 100%; margin: 15px 0 10px 0; text-align: center; }
             .busta .status-testo { width: 100%; justify-content: center; }
             .btn-elimina-sezione { top: 50%; right: 15px; transform: translateY(-50%); }
 
-            /* Trasformazione Tabella in Card per Mobile */
+            /* Trasformazione Tabella in Card per Mobile con bordi marcati */
             .tabella-documenti, .tabella-documenti tbody, .tabella-documenti tr, .tabella-documenti td { display: block; width: 100%; box-sizing: border-box; }
             .tabella-documenti thead { display: none; }
-            .tabella-documenti tr { margin-bottom: 20px; border-radius: 20px; padding: 20px; background: var(--bianco); box-shadow: 0 10px 25px rgba(27, 54, 93, 0.08); position: relative; border: 1px solid rgba(0,0,0,0.03); overflow: hidden; }
+            
+            /* Migliorata visibilità bordi e ombre dei Documenti su Mobile */
+            .tabella-documenti tr { margin-bottom: 20px; border-radius: 20px; padding: 20px; background: var(--bianco); box-shadow: 0 6px 18px rgba(27, 54, 93, 0.08); position: relative; border: 1px solid #CBD5E0; overflow: hidden; }
             
             /* Spostiamo i colori di stato dalla TD alla TR intera per le Card */
             .row-sfumato-verde td, .row-sfumato-allerta td, .row-sfumato-scaduto td, .row-sfumato-archiviato td { background-color: transparent !important; color: inherit; }
-            .row-sfumato-verde { background-color: #F0FDF4 !important; border-color: #C6F6D5 !important; }
+            .row-sfumato-verde { background-color: #F0FDF4 !important; border-color: #9AE6B4 !important; }
             .row-sfumato-allerta { background-color: #FFEDD5 !important; border-color: #FBD38D !important; }
-            .row-sfumato-scaduto { background-color: #9B2C2C !important; color: white !important; }
+            .row-sfumato-scaduto { background-color: #9B2C2C !important; border-color: #742A2A !important; color: white !important; }
             .row-sfumato-scaduto td { color: white !important; }
-            .row-sfumato-archiviato { background-color: #F8FAFC !important; border-color: #E2E8F0 !important; }
+            .row-sfumato-archiviato { background-color: #F8FAFC !important; border-color: #CBD5E0 !important; }
 
             .tabella-documenti td { padding: 6px 0; text-align: left !important; border-radius: 0 !important; }
             .tabella-documenti td:first-child { font-size: 1.2rem; font-weight: 800; padding-bottom: 10px; }
@@ -197,7 +205,7 @@
             .row-sfumato-scaduto td:last-child { border-top-color: rgba(255,255,255,0.2); }
             
             .btn-azione-riga { flex: 1; min-width: calc(50% - 10px); margin: 0; padding: 12px 0; height: auto; }
-            .btn-azione-apri { min-width: 100%; } /* Il tasto Apri è sempre grande quanto tutta la riga */
+            .btn-azione-apri { min-width: 100%; }
 
             /* Bottom Sheet Modals (Modali a comparsa dal basso) */
             .modal-overlay { align-items: flex-end; padding: 0; }
@@ -215,6 +223,7 @@
     <div class="container">
         <div class="top-app-bar">
             <button class="btn-admin" id="botton-admin" onclick="apriGestioneUtenti()"><i class="fa-solid fa-users-gear"></i> Permessi</button>
+            <button class="btn-password" id="botton-password" onclick="apriModalPassword()"><i class="fa-solid fa-key"></i> Password</button>
             <div style="flex-grow: 1;"></div>
             <button class="btn-logout" id="botton-logout" onclick="eseguiLogout()"><i class="fa-solid fa-right-from-bracket"></i> Esci</button>
         </div>
@@ -408,6 +417,25 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="modal-password">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-key"></i> Cambia Password</h2>
+                <button class="btn-chiudi-modal" onclick="chiudiModalPassword()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-cambio-password" onsubmit="salvaNuovaPassword(event)">
+                <div class="form-group">
+                    <label for="input-nuova-password">Inserisci Nuova Password</label>
+                    <input type="password" id="input-nuova-password" placeholder="Minimo 6 caratteri..." minlength="6" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-annulla" onclick="chiudiModalPassword()">Annulla</button>
+                    <button type="submit" class="btn-salva"><i class="fa-solid fa-floppy-disk"></i> Aggiorna</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://dytskuifwkgvdojnezoe.supabase.co'; 
         const SUPABASE_ANON_KEY = 'sb_publishable_eR-32KA6XBl87ejXvZepVw_WwICHNh1'; 
@@ -428,7 +456,6 @@
         let sharedFileBlob = null; 
 
         window.onload = function() {
-            // PWA Registration with relative path for GitHub pages compatability
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/scadenziario/sw.js')
                     .then(reg => console.log('PWA Service Worker registrato correttamente.'))
@@ -441,6 +468,7 @@
                     document.getElementById('view-login').style.display = 'none';
                     document.getElementById('contenuto-principale-app').style.display = 'block';
                     document.getElementById('botton-logout').style.display = 'inline-flex';
+                    document.getElementById('botton-password').style.display = 'inline-flex';
                     caricaDatiDalCloud();
                 } else {
                     currentUserId = null;
@@ -449,6 +477,7 @@
                     document.getElementById('contenuto-principale-app').style.display = 'none';
                     document.getElementById('botton-logout').style.display = 'none';
                     document.getElementById('botton-admin').style.display = 'none';
+                    document.getElementById('botton-password').style.display = 'none';
                 }
             });
         };
@@ -764,7 +793,6 @@
             });
         }
 
-        // Funzione centralizzata per renderizzare le righe/card
         function costruisciRigaTabella(doc, containerElement) {
             const tr = document.createElement('tr');
             const stato = calcolaStatoDocumento(doc);
@@ -879,7 +907,7 @@
             chiudiGestioneUtenti();
         }
 
-        // --- FUNZIONI MODALI ---
+        // --- FUNZIONI MODALI PRINCIPALI ---
         function apriModalSezione() {
             document.getElementById('titolo-modal-sezione').innerHTML = vistaAttuale === 'personale' ? `<i class="fa-solid fa-lock"></i> Nuova Cartella Riservata` : `<i class="fa-solid fa-folder-plus"></i> Nuova Cartella`;
             document.getElementById('modal-sezione').classList.add('active'); 
@@ -949,6 +977,32 @@
             } else {
                 feedbackBox.innerText = "";
                 feedbackBox.style.display = 'none';
+            }
+        }
+
+        // --- FUNZIONI CAMBIO PASSWORD ---
+        function apriModalPassword() {
+            document.getElementById('modal-password').classList.add('active');
+        }
+
+        function chiudiModalPassword() {
+            document.getElementById('modal-password').classList.remove('active');
+            document.getElementById('form-cambio-password').reset();
+        }
+
+        async function salvaNuovaPassword(event) {
+            event.preventDefault();
+            const nuovaPassword = document.getElementById('input-nuova-password').value;
+            
+            const { data, error } = await supabaseClient.auth.updateUser({
+                password: nuovaPassword
+            });
+
+            if (error) {
+                alert("Errore durante il cambio password:\n" + error.message);
+            } else {
+                alert("Password aggiornata con successo! Al prossimo accesso usa quella nuova.");
+                chiudiModalPassword();
             }
         }
 
