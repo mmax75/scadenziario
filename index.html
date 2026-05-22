@@ -665,11 +665,8 @@
                 const sez = sezioni.find(s => s.id === sezioneId);
                 document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome} ${sez.privato ? '<span style="font-size:0.9rem; vertical-align:middle; color:var(--grigio-luce);"><i class="fa-solid fa-lock"></i> Area Riservata</span>' : ''}`;
                 
-                if (currentUserRole === 'operatore' && vistaAttuale === 'porto') {
-                    if(btnNuovo) btnNuovo.style.display = 'none';
-                } else {
-                    if(btnNuovo) btnNuovo.style.display = 'inline-flex';
-                }
+                // SBLOCCATO: Tutti vedono il tasto "Nuova Scadenza" se sono dentro una cartella valida
+                if(btnNuovo) btnNuovo.style.display = 'inline-flex';
             }
             
             document.getElementById('view-archivio').style.display = 'none';
@@ -712,10 +709,8 @@
                     });
                 }
 
-                let btnCestino = '';
-                if (currentUserRole === 'admin' || vistaAttuale === 'personale') {
-                    btnCestino = `<button class="btn-elimina-sezione" title="Cancella Cartella" onclick="eliminaSezione(event, '${sez.id}')"><i class="fa-solid fa-trash-can"></i></button>`;
-                }
+                // SBLOCCATO: Cestino visibile a tutti gli autorizzati
+                let btnCestino = `<button class="btn-elimina-sezione" title="Cancella Cartella" onclick="eliminaSezione(event, '${sez.id}')"><i class="fa-solid fa-trash-can"></i></button>`;
 
                 const div = document.createElement('div');
                 div.className = sez.privato ? 'busta busta-privata' : 'busta';
@@ -730,13 +725,12 @@
                 griglia.appendChild(div);
             });
 
-            if (currentUserRole === 'admin' || vistaAttuale === 'personale') {
-                const btnAggiungi = document.createElement('div');
-                btnAggiungi.className = 'busta busta-aggiungi';
-                btnAggiungi.onclick = apriModalSezione;
-                btnAggiungi.innerHTML = `<i class="fa-solid fa-folder-plus icona-cartella"></i><h3>Crea Nuova</h3>`;
-                griglia.appendChild(btnAggiungi);
-            }
+            // SBLOCCATO: Tasto "Crea Nuova Cartella" visibile a tutti gli autorizzati
+            const btnAggiungi = document.createElement('div');
+            btnAggiungi.className = 'busta busta-aggiungi';
+            btnAggiungi.onclick = apriModalSezione;
+            btnAggiungi.innerHTML = `<i class="fa-solid fa-folder-plus icona-cartella"></i><h3>Crea Nuova</h3>`;
+            griglia.appendChild(btnAggiungi);
 
             const sezioniFiltrateIds = sezioniFiltrate.map(s => s.id);
             const contaArchiviati = documentoList.filter(d => d.archiviato && sezioniFiltrateIds.includes(d.sezione_id)).length;
@@ -811,7 +805,8 @@
                 pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-nulla" disabled><i class="fa-solid fa-eye-slash"></i> Senza File</button>`;
             }
 
-            let puoAgire = (currentUserRole === 'admin' || vistaAttuale === 'personale');
+            // SBLOCCATO: Autorizzati possono eseguire le azioni
+            let puoAgire = true;
 
             let bottoniAzione = '';
             if (doc.archiviato) {
