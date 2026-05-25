@@ -7,6 +7,8 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         /* --- CONFIGURAZIONE COLORI TEMA MARINA --- */
@@ -25,7 +27,7 @@
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--sfondo); color: #333; padding: 20px 15px; overflow-x: hidden; }
         .container { max-width: 1140px; margin: 0 auto; }
 
-        /* --- TOP APP BAR (Nuova struttura per evitare sovrapposizioni) --- */
+        /* --- TOP APP BAR --- */
         .top-app-bar { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 20px; min-height: 40px; }
         
         .btn-logout { background-color: #FFF5F5; color: #E53E3E; border: 1px solid #FED7D7; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: none; transition: all 0.2s; align-items: center; gap: 6px; }
@@ -173,7 +175,6 @@
 
             .archivio-grid { grid-template-columns: 1fr; gap: 20px; }
             
-            /* Migliorata visibilità bordi e ombre delle Cartelle su Mobile */
             .busta { padding: 30px 20px; flex-direction: row; flex-wrap: wrap; text-align: left; justify-content: space-between; align-items: center; border-radius: 20px; border: 1px solid #CBD5E0; box-shadow: 0 6px 18px rgba(27, 54, 93, 0.08); }
             
             .busta i.icona-cartella { font-size: 2.5rem; margin: 0 15px 0 0; }
@@ -182,14 +183,11 @@
             .busta .status-testo { width: 100%; justify-content: center; }
             .btn-elimina-sezione { top: 50%; right: 15px; transform: translateY(-50%); }
 
-            /* Trasformazione Tabella in Card per Mobile con bordi marcati */
             .tabella-documenti, .tabella-documenti tbody, .tabella-documenti tr, .tabella-documenti td { display: block; width: 100%; box-sizing: border-box; }
             .tabella-documenti thead { display: none; }
             
-            /* Migliorata visibilità bordi e ombre dei Documenti su Mobile */
             .tabella-documenti tr { margin-bottom: 20px; border-radius: 20px; padding: 20px; background: var(--bianco); box-shadow: 0 6px 18px rgba(27, 54, 93, 0.08); position: relative; border: 1px solid #CBD5E0; overflow: hidden; }
             
-            /* Spostiamo i colori di stato dalla TD alla TR intera per le Card */
             .row-sfumato-verde td, .row-sfumato-allerta td, .row-sfumato-scaduto td, .row-sfumato-archiviato td { background-color: transparent !important; color: inherit; }
             .row-sfumato-verde { background-color: #F0FDF4 !important; border-color: #9AE6B4 !important; }
             .row-sfumato-allerta { background-color: #FFEDD5 !important; border-color: #FBD38D !important; }
@@ -200,19 +198,16 @@
             .tabella-documenti td { padding: 6px 0; text-align: left !important; border-radius: 0 !important; }
             .tabella-documenti td:first-child { font-size: 1.2rem; font-weight: 800; padding-bottom: 10px; }
             
-            /* Riga Bottoni in fondo alla Card */
             .tabella-documenti td:last-child { display: flex; flex-wrap: wrap; gap: 10px; justify-content: stretch; margin-top: 15px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.08); }
             .row-sfumato-scaduto td:last-child { border-top-color: rgba(255,255,255,0.2); }
             
             .btn-azione-riga { flex: 1; min-width: calc(50% - 10px); margin: 0; padding: 12px 0; height: auto; }
             .btn-azione-apri { min-width: 100%; }
 
-            /* Bottom Sheet Modals (Modali a comparsa dal basso) */
             .modal-overlay { align-items: flex-end; padding: 0; }
             .modal-box { transform: translateY(100%); border-radius: 30px 30px 0 0; padding: 30px 25px 45px; margin: 0; max-width: 100%; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
             .modal-overlay.active .modal-box { transform: translateY(0); }
             
-            /* Elemento visivo (maniglietta) tipico delle bottom sheet */
             .modal-box::before { content: ''; display: block; width: 50px; height: 5px; background: #CBD5E0; border-radius: 10px; margin: -10px auto 25px auto; }
             .modal-header h2 { font-size: 1.3rem; }
         }
@@ -281,6 +276,9 @@
                     <h2 id="titolo-sezione">Caricamento...</h2>
                     <button class="btn-azione-principale" id="btn-crea-scadenza-in-sezione" onclick="apriModalDocumento(null)">
                         <i class="fa-solid fa-calendar-plus"></i> Nuova Scadenza
+                    </button>
+                    <button class="btn-azione-principale" id="btn-esporta-excel-sezione" onclick="esportaInExcel()" style="background-color: #107C41; box-shadow: 0 4px 15px rgba(16, 124, 65, 0.2); display: none;">
+                        <i class="fa-solid fa-file-excel"></i> Esporta in Excel
                     </button>
                 </div>
                 <div class="tabella-wrapper">
@@ -657,16 +655,18 @@
             pulisciRicerca(false);
             currentSezioneId = sezioneId;
             const btnNuovo = document.getElementById('btn-crea-scadenza-in-sezione');
+            const btnExcel = document.getElementById('btn-esporta-excel-sezione');
             
             if (sezioneId === 'archivio_storico') {
                 document.getElementById('titolo-sezione').innerHTML = `<i class="fa-solid fa-boxes-stacked"></i> Archivio Storico Generale`;
                 if(btnNuovo) btnNuovo.style.display = 'none'; 
+                if(btnExcel) btnExcel.style.display = 'inline-flex';
             } else {
                 const sez = sezioni.find(s => s.id === sezioneId);
                 document.getElementById('titolo-sezione').innerHTML = `<i class="fa-regular fa-folder-open"></i> ${sez.nome} ${sez.privato ? '<span style="font-size:0.9rem; vertical-align:middle; color:var(--grigio-luce);"><i class="fa-solid fa-lock"></i> Area Riservata</span>' : ''}`;
                 
-                // SBLOCCATO: Tutti vedono il tasto "Nuova Scadenza" se sono dentro una cartella valida
                 if(btnNuovo) btnNuovo.style.display = 'inline-flex';
+                if(btnExcel) btnExcel.style.display = 'none';
             }
             
             document.getElementById('view-archivio').style.display = 'none';
@@ -704,12 +704,11 @@
                             pesoMassimoTrovato = statoDoc.peso; 
                             if(statoDoc.peso === 3) iconaSemaforoBusta = `<i class="fa-solid fa-circle-xmark" style="color:#9B2C2C;"></i> Scaduto`;
                             else if(statoDoc.peso === 2) iconaSemaforoBusta = `<i class="fa-solid fa-circle-exclamation" style="color:#C05621;"></i> Allerta`;
-                            else iconaSemaforoBusta = `<i class="fa-solid fa-circle-check" style="color:#2F855A;"></i> Regolare`;
+                            else iconaSemaforoBusta = `<i class="fa-solid fa-circle-check" style="color:#2F855A;"></i> Regular`;
                         }
                     });
                 }
 
-                // SBLOCCATO: Cestino visibile a tutti gli autorizzati
                 let btnCestino = `<button class="btn-elimina-sezione" title="Cancella Cartella" onclick="eliminaSezione(event, '${sez.id}')"><i class="fa-solid fa-trash-can"></i></button>`;
 
                 const div = document.createElement('div');
@@ -725,7 +724,6 @@
                 griglia.appendChild(div);
             });
 
-            // SBLOCCATO: Tasto "Crea Nuova Cartella" visibile a tutti gli autorizzati
             const btnAggiungi = document.createElement('div');
             btnAggiungi.className = 'busta busta-aggiungi';
             btnAggiungi.onclick = apriModalSezione;
@@ -805,7 +803,6 @@
                 pulsanteConsultazione = `<button class="btn-azione-riga btn-azione-nulla" disabled><i class="fa-solid fa-eye-slash"></i> Senza File</button>`;
             }
 
-            // SBLOCCATO: Autorizzati possono eseguire le azioni
             let puoAgire = true;
 
             let bottoniAzione = '';
@@ -998,6 +995,69 @@
             } else {
                 alert("Password aggiornata con successo! Al prossimo accesso usa quella nuova.");
                 chiudiModalPassword();
+            }
+        }
+
+        // --- ESPORTAZIONE IN EXCEL CORRETTA E RIGIDA (RISOLTO FILE VUOTO) ---
+        // --- ESPORTAZIONE NATIVA IN EXCEL (CSV) INFALLIBILE ---
+        function esportaInExcel() {
+            try {
+                // 1. Identifichiamo le sezioni a cui l'utente ha accesso
+                const sezioniFiltrateIds = sezioni.filter(s => {
+                    if (vistaAttuale === 'porto') {
+                        if (s.privato === true) return false;
+                        if (currentUserRole === 'admin') return true;
+                        return userPermissions.includes(s.id);
+                    } else {
+                        return s.privato === true && s.user_id === currentUserId;
+                    }
+                }).map(s => s.id);
+
+                // 2. Estraiamo i documenti archiviati
+                const docArchiviati = documentoList.filter(d => d.archiviato && sezioniFiltrateIds.includes(d.sezione_id));
+
+                if (!docArchiviati || docArchiviati.length === 0) {
+                    alert("Attenzione: Non ci sono documenti nell'Archivio Storico da poter esportare.");
+                    return;
+                }
+
+                // 3. Creiamo l'intestazione delle colonne per Excel (usiamo il punto e virgola per l'Excel italiano)
+                let csvContent = "Nome Documento / Certificato;Cartella di Provenienza;Data di Scadenza;Stato Precedente;Allegato Presente\n";
+
+                // 4. Inseriamo i dati riga per riga
+                docArchiviati.forEach(doc => {
+                    const sez = sezioni.find(s => s.id === doc.sezione_id);
+                    const stato = calcolaStatoDocumento(doc);
+                    
+                    // Puliamo eventuali virgolette nei nomi che potrebbero "rompere" il file
+                    const nomePulito = (doc.nome || 'Senza nome').replace(/"/g, '""');
+                    const cartellaPulita = (sez ? sez.nome : 'Sconosciuta').replace(/"/g, '""');
+                    const dataScad = doc.data_scadenza ? new Date(doc.data_scadenza).toLocaleDateString('it-IT') : 'N.D.';
+                    const statoTesto = stato ? stato.testo : 'N.D.';
+                    const haAllegato = doc.file_path && doc.file_path !== 'null' ? "Sì" : "No";
+
+                    // Costruiamo la riga
+                    csvContent += `"${nomePulito}";"${cartellaPulita}";"${dataScad}";"${statoTesto}";"${haAllegato}"\n`;
+                });
+
+                // 5. Creiamo il file e forziamo la codifica UTF-8 BOM (per far leggere correttamente gli accenti a Excel)
+                const BOM = "\uFEFF"; 
+                const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                
+                // 6. Simuliamo il click per il download
+                const link = document.createElement("a");
+                const dataOggi = new Date().toISOString().split('T')[0];
+                link.setAttribute("href", url);
+                link.setAttribute("download", `Report_Archivio_Porto_Antico_${dataOggi}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+            } catch (errore) {
+                console.error("Errore esportazione:", errore);
+                alert("Si è verificato un errore durante l'estrazione: " + errore.message);
             }
         }
 
