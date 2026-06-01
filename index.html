@@ -7,6 +7,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         /* --- CONFIGURAZIONE COLORI TEMA MARINA --- */
@@ -95,6 +96,10 @@
         .header-sezione { display: flex; justify-content: space-between; align-items: center; background-color: var(--bianco); padding: 24px; border-radius: 20px; border-left: 6px solid var(--azzurro); box-shadow: 0 8px 25px rgba(27, 54, 93, 0.04); margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
         .header-sezione h2 { color: var(--blu-navy); font-size: 1.6rem; font-weight: 800; width: 100%; }
         .btn-azione-principale { background-color: var(--azzurro); color: var(--bianco); border: none; padding: 14px 24px; border-radius: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; box-shadow: 0 4px 15px rgba(0, 119, 200, 0.2); width: 100%; }
+
+        /* NUOVO BOTTONE EXCEL */
+        .btn-export-excel { background-color: #107C41; color: var(--bianco); border: none; padding: 14px 24px; border-radius: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; box-shadow: 0 4px 15px rgba(16, 124, 65, 0.2); transition: all 0.2s; }
+        .btn-export-excel:hover { background-color: #0e6b37; }
 
         /* TABELLE DESKTOP */
         .tabella-wrapper { background-color: transparent; border: none; overflow: visible; }
@@ -283,9 +288,14 @@
                 </div>
                 <div class="header-sezione" id="header-dinamico-sezione">
                     <h2 id="titolo-sezione">Caricamento...</h2>
-                    <button class="btn-azione-principale" id="btn-crea-scadenza-in-sezione" onclick="apriModalDocumento(null, false)">
-                        <i class="fa-solid fa-calendar-plus"></i> Nuova Scadenza
-                    </button>
+                    <div style="display: flex; gap: 12px; width: 100%; flex-wrap: wrap; margin-top: 5px;">
+                        <button class="btn-azione-principale" id="btn-crea-scadenza-in-sezione" onclick="apriModalDocumento(null, false)" style="flex: 1; min-width: 180px; width: auto;">
+                            <i class="fa-solid fa-calendar-plus"></i> Nuova Scadenza
+                        </button>
+                        <button class="btn-export-excel" onclick="esportaInExcel()" style="flex: 1; min-width: 180px;">
+                            <i class="fa-solid fa-file-excel"></i> Esporta in Excel
+                        </button>
+                    </div>
                 </div>
                 <div class="tabella-wrapper">
                     <table class="tabella-documenti">
@@ -708,7 +718,7 @@
                             pesoMassimoTrovato = statoDoc.peso; 
                             if(statoDoc.peso === 3) iconaSemaforoBusta = `<i class="fa-solid fa-circle-xmark" style="color:#9B2C2C;"></i> Scaduto`;
                             else if(statoDoc.peso === 2) iconaSemaforoBusta = `<i class="fa-solid fa-circle-exclamation" style="color:#C05621;"></i> Allerta`;
-                            else iconaSemaforoBusta = `<i class="fa-solid fa-circle-check" style="color:#2F855A;"></i> Regolare`;
+                            else iconaSemaforoBusta = `<i class="fa-solid fa-circle-check" style="color:#2F855A;"></i> Regular`;
                         }
                     });
                 }
@@ -1162,6 +1172,70 @@
         function apriFileReale(filePath) {
             const { data } = supabaseClient.storage.from('file_documenti').getPublicUrl(filePath);
             if (data && data.publicUrl) window.open(data.publicUrl, '_blank'); else alert("Impossibile scaricare il file.");
+        }
+
+        // --- FUNZIONE DI ESPORTAZIONE IN EXCEL ---
+        function esportaInExcel() {
+            let nomeCartella = "Esportazione";
+            if (currentSezioneId === 'archivio_storico') {
+                nomeCartella = "Archivio Storico";
+            } else {
+                const sez = sezioni.find(s => s.id === currentSezioneId);
+                if (sez) nomeCartella = sez.nome;
+            }
+
+            // Estrazione e filtraggio dati speculare a renderDocumenti()
+            const sezioniFiltrateIds = sezioni.filter(s => {
+                if (vistaAttuale === 'porto') {
+                    if (s.privato === true) return false;
+                    if (currentUserRole === 'admin') return true;
+                    return userPermissions.includes(s.id);
+                } else {
+                    return s.privato === true && s.user_id === currentUserId;
+                }
+            }).map(s => s.id);
+
+            let docFiltrati = [];
+            if (currentSezioneId === 'archivio_storico') {
+                docFiltrati = documentoList.filter(d => d.archiviato && sezioniFiltrateIds.includes(d.sezione_id));
+            } else {
+                docFiltrati = documentoList.filter(d => d.sezione_id === currentSezioneId && !d.archiviato);
+            }
+
+            if (docFiltrati.length === 0) {
+                alert("Nessun documento trovato in questa cartella da poter esportare.");
+                return;
+            }
+
+            // Ordinamento identico alla tabella visiva
+            docFiltrati.sort((a, b) => {
+                if (a.archiviato !== b.archiviato) return a.archiviato ? 1 : -1;
+                const statoA = calcolaStatoDocumento(a);
+                const statoB = calcolaStatoDocumento(b);
+                if (statoA.peso !== statoB.peso) return statoB.peso - statoA.peso;
+                return new Date(a.data_scadenza) - new Date(b.data_scadenza);
+            });
+
+            // Mappatura pulita dei campi strutturati per l'Excel
+            const righeData = docFiltrati.map(doc => {
+                const stato = calcolaStatoDocumento(doc);
+                return {
+                    "Nome Documento": doc.nome,
+                    "Data Scadenza": new Date(doc.data_scadenza).toLocaleDateString('it-IT'),
+                    "Stato": stato.testo,
+                    "Preavviso": doc.preavviso ? doc.preavviso.replace('_', ' ') : '4 mesi',
+                    "Storico/Archiviato": doc.archiviato ? "Sì" : "No"
+                };
+            });
+
+            // Generazione del file Excel con SheetJS
+            const worksheet = XLSX.utils.json_to_sheet(righeData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Scadenze");
+            
+            // Creazione nome file sicuro e download automatico
+            const safeFileName = nomeCartella.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            XLSX.writeFile(workbook, `scadenze_${safeFileName}.xlsx`);
         }
     </script>
 </body>
